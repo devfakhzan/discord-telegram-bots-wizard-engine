@@ -1,0 +1,34 @@
+{
+  "name": "discord-telegram-bots-wizard-engine",
+  "version": "1.0.17",
+  "description": "",
+  "main": "dist/index",
+  "types": "src/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsup src/index.ts --format esm,cjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/devfakhzan/discord-telegram-bots-wizard-engine.git"
+  },
+  "author": "devfakhzan",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/devfakhzan/discord-telegram-bots-wizard-engine/issues"
+  },
+  "homepage": "https://github.com/devfakhzan/discord-telegram-bots-wizard-engine#readme",
+  "dependencies": {
+    "dayjs": "^1.11.10",
+    "discord.js": "^14.14.1",
+    "ethers": "^5.7.2"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "tsup": "^8.0.2",
+    "typescript": "^5.4.3"
+  },
+  "publishConfig": {
+    "@Floki-Inu:registry": "https://npm.pkg.github.com"
+  }
+}
