@@ -274,11 +274,13 @@ const producer = (producerInitiator: BotProducerInitiator) => {
         }
 
         if (ctx.update?.callback_query?.data === universalOnCompleteConfirm) {
+          ctx.scene.leave();
           producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
           return;
         }
 
         if (ctx.update?.callback_query?.data === universalOnComplete) {
+          ctx.scene.leave();
           producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
           return;
         }
@@ -510,6 +512,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
         
         if (step.step === "DONESTEP" && !producerInitiator.finalConfirmationNeeded) {
           console.log(producerInitiator)
+          ctx.scene.leave();
           producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
           return;
         }
