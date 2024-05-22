@@ -1864,10 +1864,10 @@ ${key}:
             break;
         }
         let regular = `Question:       
-<u>${typeof step.title === "string" ? step.title : await step.title(
+${typeof step.title === "string" ? step.title : await step.title(
           ctx.scene.state.userId,
           ctx.scene.state.targetObject
-        )}</u>${dateRangeInfo}${multiSelectMenu}
+        )}${dateRangeInfo}${multiSelectMenu}
 ${step.example ? "\n For example:\n " + step.example() + "\n" : ""}        
 ${currentValue ? currentValueLabel : ""}
 ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
@@ -1899,9 +1899,8 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           }
         }
         if (step.step === "DONESTEP_RESPONSE_CONFIRM") {
-          header = "<b>Confirm to proceed?</b>";
-          progressBar = "";
-          summary = "";
+          producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
+          return;
         }
         const body = `${header}${progressBar ? "\n\nSteps: " + subProgressBar + "\n\n" : ""}${summary}`;
         const baseKeyboard = [];
