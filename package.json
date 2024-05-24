@@ -1,6 +1,6 @@
 {
   "name": "discord-telegram-bots-wizard-engine",
-  "version": "1.0.23",
+  "version": "1.0.24",
   "description": "",
   "main": "dist/index",
   "types": "src/index.d.ts",
@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/devfakhzan/discord-telegram-bots-wizard-engine#readme",
   "dependencies": {
+    "bignumber.js": "^9.1.2",
     "dayjs": "^1.11.10",
     "discord.js": "^14.14.1",
     "ethers": "^5.7.2"

@@ -1,6 +1,7 @@
 // src/launchpadProjectsLaunch.ts
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import dayjs from "dayjs";
+import BigNumber from "bignumber.js";
 dayjs.extend(customParseFormat);
 var universalBack = "||universalBack||";
 var universalOnComplete = "||onComplete||";
@@ -354,7 +355,6 @@ var writeToObject = (obj, previousStepObject, mapTo, value, raw = false) => {
         if (isNaN(Number(finalValue))) {
           return false;
         }
-        finalValue = Number(finalValue);
         break;
       }
       case "boolean": {
@@ -493,10 +493,9 @@ var writeToObject = (obj, previousStepObject, mapTo, value, raw = false) => {
         break;
       }
       case "number": {
-        if (isNaN(Number(finalValue))) {
+        if (new BigNumber(finalValue).isNaN()) {
           return false;
         }
-        finalValue = Number(finalValue);
         break;
       }
       case "boolean": {
@@ -1051,13 +1050,11 @@ var producer = (UserDb, targetObject, mainSteps) => {
                     ) === true;
                     break;
                   case "number":
-                    dependsOnValue = Number(
-                      readObject(
-                        //@ts-ignore
-                        client[interaction.user.id].targetObject,
-                        dependsOn.key,
-                        mainSteps
-                      )
+                    dependsOnValue = readObject(
+                      //@ts-ignore
+                      client[interaction.user.id].targetObject,
+                      dependsOn.key,
+                      mainSteps
                     );
                     break;
                 }
@@ -1677,12 +1674,10 @@ var producer2 = (producerInitiator) => {
                 ) === true;
                 break;
               case "number":
-                dependsOnValue = Number(
-                  readObject(
-                    ctx.scene.state.targetObject,
-                    dependsOn.key,
-                    mainSteps
-                  )
+                dependsOnValue = readObject(
+                  ctx.scene.state.targetObject,
+                  dependsOn.key,
+                  mainSteps
                 );
                 break;
             }

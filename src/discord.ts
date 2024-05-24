@@ -393,13 +393,13 @@ const producer = (UserDb: any, targetObject: any, mainSteps: any) => {
                     break;
                   case "number":
                     //@ts-ignore
-                    dependsOnValue = Number(
+                    dependsOnValue =
                       readObject(
                         //@ts-ignore
                         client[interaction.user.id].targetObject,
                         dependsOn.key,
                         mainSteps
-                      )
+                      
                     );
                     break;
                 }

@@ -597,13 +597,13 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 break;
               case "number":
                 //@ts-ignore
-                dependsOnValue = Number(
+                dependsOnValue = 
                   readObject(
                     ctx.scene.state.targetObject,
                     dependsOn.key,
                     mainSteps
                   )
-                );
+                ;
                 break;
             }
 

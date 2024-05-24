@@ -11,6 +11,7 @@
 import customParseFormat from "dayjs/plugin/customParseFormat";
 
 import dayjs from "dayjs";
+import BigNumber from "bignumber.js";
 dayjs.extend(customParseFormat);
 
 export const universalBack = "||universalBack||";
@@ -406,7 +407,7 @@ export const writeToObject = (
         if (isNaN(Number(finalValue))) {
           return false;
         }
-        finalValue = Number(finalValue);
+        //finalValue = Number(finalValue);
         break;
       }
       case "boolean": {
@@ -582,10 +583,10 @@ export const writeToObject = (
         break;
       }
       case "number": {
-        if (isNaN(Number(finalValue))) {
+        if ((new BigNumber(finalValue)).isNaN()) {
           return false;
         }
-        finalValue = Number(finalValue);
+        //finalValue = Number(finalValue);
         break;
       }
       case "boolean": {
