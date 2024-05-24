@@ -897,6 +897,10 @@ export const getSummary = async (ctx:any, mainSteps: any, type: any, obj: any, s
         mainSteps
       );
 
+      if (step?.excludeFromSummaryIfValueIs && step?.excludeFromSummaryIfValueIs === readObject(obj, step.mapTo, mainSteps)) {
+        continue;
+      }
+
       if (step.valueType === "boolean" && currentValue !== null) {
         currentValue = currentValue === true ? "Yes" : "No";
       }

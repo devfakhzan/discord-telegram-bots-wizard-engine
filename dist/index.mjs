@@ -734,6 +734,9 @@ var getSummary = async (ctx, mainSteps, type, obj, skipping) => {
         obj,
         mainSteps
       );
+      if ((step == null ? void 0 : step.excludeFromSummaryIfValueIs) && (step == null ? void 0 : step.excludeFromSummaryIfValueIs) === readObject(obj, step.mapTo, mainSteps)) {
+        continue;
+      }
       if (step.valueType === "boolean" && currentValue !== null) {
         currentValue = currentValue === true ? "Yes" : "No";
       }
