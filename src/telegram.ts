@@ -836,7 +836,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
             break;
         }
 
-        let regular = `Question:       
+        let regular = `\n\n<u>Question</u>:       
 ${
           typeof step.title === "string"
             ? step.title
@@ -853,6 +853,11 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         let header = `<b>Main Step ${getEmojiNum(msi + 1)} of ${getEmojiNum(
           mainSteps.length
         )}: ${mainStep.mainStep}</b>`;
+
+        if (mainSteps.length === 1) {
+          header = `<b>${mainStep.mainStep}</b>`;
+        }
+        
         let progressBar = getProgressBar(mainSteps, msi + 1);
         let subProgressBar = getSubProgressBar(mainSteps[msi].steps, si + 1);
         if (step.step === "DONESTEP") {
@@ -890,7 +895,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         }
 
         const body = `${header}${
-          progressBar ? "\n\nSteps: " + subProgressBar + "\n\n" : ""
+          progressBar && subProgressBar?.length > 1 ? "\n\nSteps: " + subProgressBar + "" : ""
         }${summary}`;
 
         const baseKeyboard = [] as any;

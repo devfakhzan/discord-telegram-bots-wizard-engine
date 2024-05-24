@@ -882,7 +882,11 @@ export const getSummary = async (ctx:any, mainSteps: any, type: any, obj: any, s
 
   for (let mainStep of usedMainSteps) {
     i++;
-    summaryText += `\n\n<u>Main Step ${getEmojiNum(i)}: ${mainStep.mainStep}</u>\n\n`;
+    if (usedMainSteps.length === 1) {
+      summaryText += `\n\n<u>${mainStep.mainStep}</u>\n\n`; 
+    } else {
+      summaryText += `\n\n<u>Main Step ${getEmojiNum(i)}: ${mainStep.mainStep}</u>\n\n`;
+    }
     for (let step of mainStep.steps) {
       let currentValue = await getCurrentValue(
         ctx,

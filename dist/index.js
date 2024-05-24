@@ -749,11 +749,19 @@ var getSummary = async (ctx, mainSteps, type, obj, skipping) => {
   let i = 0;
   for (let mainStep of usedMainSteps) {
     i++;
-    summaryText += `
+    if (usedMainSteps.length === 1) {
+      summaryText += `
+
+<u>${mainStep.mainStep}</u>
+
+`;
+    } else {
+      summaryText += `
 
 <u>Main Step ${getEmojiNum(i)}: ${mainStep.mainStep}</u>
 
 `;
+    }
     for (let step of mainStep.steps) {
       let currentValue = await getCurrentValue(
         ctx,
@@ -1866,7 +1874,9 @@ ${key}:
             currentValueLabel = "Entered value:";
             break;
         }
-        let regular = `Question:       
+        let regular = `
+
+<u>Question</u>:       
 ${typeof step.title === "string" ? step.title : await step.title(
           ctx.scene.state.userId,
           ctx.scene.state.targetObject
@@ -1878,6 +1888,9 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         let header = `<b>Main Step ${getEmojiNum(msi + 1)} of ${getEmojiNum(
           mainSteps.length
         )}: ${mainStep.mainStep}</b>`;
+        if (mainSteps.length === 1) {
+          header = `<b>${mainStep.mainStep}</b>`;
+        }
         let progressBar = getProgressBar(mainSteps, msi + 1);
         let subProgressBar = getSubProgressBar(mainSteps[msi].steps, si + 1);
         if (step.step === "DONESTEP") {
@@ -1905,7 +1918,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
           return;
         }
-        const body = `${header}${progressBar ? "\n\nSteps: " + subProgressBar + "\n\n" : ""}${summary}`;
+        const body = `${header}${progressBar && (subProgressBar == null ? void 0 : subProgressBar.length) > 1 ? "\n\nSteps: " + subProgressBar : ""}${summary}`;
         const baseKeyboard = [];
         if ((msi === 0 && si > 0 || msi > 0) && !step.branchDone) {
           baseKeyboard.push({
