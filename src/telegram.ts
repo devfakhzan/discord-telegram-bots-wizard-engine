@@ -31,8 +31,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
   for (let [msi, mainStep] of mainSteps.entries()) {
     //@ts-ignore
 
-    if (mainStep.steps[mainStep.steps.length-1].step === "DONESTEP") {
-
+    if (mainStep.steps[mainStep.steps.length - 1].step === "DONESTEP") {
       if (producerInitiator.finalConfirmationNeeded) {
         mainStep.steps.push({
           step: "DONESTEP_RESPONSE_CONFIRM",
@@ -46,7 +45,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               value: "||onCompleteConfirm||",
             },
           ],
-        })
+        });
 
         mainStep.steps.push({
           step: "DONESTEP_RESPONSE_CONFIRM_RESPONSE",
@@ -54,7 +53,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
           type: "input",
           mapTo: "done",
           valueType: "boolean",
-        })
+        });
       }
 
       mainStep.steps.push({
@@ -63,7 +62,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
         type: "input",
         mapTo: "done",
         valueType: "boolean",
-      })
+      });
     }
     for (let [si, step] of mainStep.steps.entries() as any) {
       let fn = async (
@@ -78,7 +77,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
         } catch (e) {
           // console.log("Error deleting message", e);
         }
-        
+
         //Deep clone targetObject to use at the start
         if (msi === 0 && si === 0 && !ctx.scene.state.targetObject) {
           ctx.scene.state.targetObject = JSON.parse(
@@ -185,7 +184,6 @@ const producer = (producerInitiator: BotProducerInitiator) => {
           ) &&
           !mainSteps?.[prev?.previousMainStep]?.steps[prev?.previousStep]
             ?.inBranch
-            
         ) {
           //ctx.wizard.cursor--;
           //ctx.wizard.steps[ctx.wizard.cursor](ctx);
@@ -269,19 +267,21 @@ const producer = (producerInitiator: BotProducerInitiator) => {
           await ctx.reply("Logo Uploaded!");
         }
 
-        if (ctx.update?.callback_query?.data === universalOnCompleteConfirmation) {
+        if (
+          ctx.update?.callback_query?.data === universalOnCompleteConfirmation
+        ) {
           //Nothing
         }
 
         if (ctx.update?.callback_query?.data === universalOnCompleteConfirm) {
           ctx.scene.leave();
-          producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
+          await producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
           return;
         }
 
         if (ctx.update?.callback_query?.data === universalOnComplete) {
           ctx.scene.leave();
-          producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
+          await producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
           return;
         }
 
@@ -332,18 +332,21 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               ? (ctx.update.callback_query.data = undefined)
               : null;
 
-            if (previousStepObject?.validationError && typeof previousStepObject?.validationError === 'string') {
+            if (
+              previousStepObject?.validationError &&
+              typeof previousStepObject?.validationError === "string"
+            ) {
               await ctx.reply(previousStepObject?.validationError);
             } else {
               await ctx.reply("Invalid input. Please try again.");
             }
-            
+
             return;
           }
         }
 
         //Callback data processor
-        
+
         let mapTos: any = null;
         if (previousStepObject?.mapTo) {
           mapTos =
@@ -381,7 +384,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 );
 
                 if (result === false) {
-                  console.log("CB", callbackData)
+                  console.log("CB", callbackData);
                   // if (callbackData === universalOnCompleteConfirm) {
                   //   ctx.update.callback_query.data = null;
                   //   ctx.wizard.cursor++;
@@ -515,11 +518,12 @@ const producer = (producerInitiator: BotProducerInitiator) => {
           }
         }
 
-        
-        if (step.step === "DONESTEP" && !producerInitiator.finalConfirmationNeeded) {
-          console.log(producerInitiator)
+        if (
+          step.step === "DONESTEP" &&
+          !producerInitiator.finalConfirmationNeeded
+        ) {
           ctx.scene.leave();
-          producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
+          await producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
           return;
         }
 
@@ -603,13 +607,11 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 break;
               case "number":
                 //@ts-ignore
-                dependsOnValue = 
-                  readObject(
-                    ctx.scene.state.targetObject,
-                    dependsOn.key,
-                    mainSteps
-                  )
-                ;
+                dependsOnValue = readObject(
+                  ctx.scene.state.targetObject,
+                  dependsOn.key,
+                  mainSteps
+                );
                 break;
             }
 
@@ -844,17 +846,17 @@ const producer = (producerInitiator: BotProducerInitiator) => {
 
         let title;
         if (typeof step.title === "string") {
-          title = step.title
+          title = step.title;
         } else {
           try {
             title = await step.title(
               ctx.scene.state.userId,
               ctx.scene.state.targetObject,
               ctx
-            )
+            );
           } catch (e) {
-            console.log("ERROR HEREEEEE2")
-            return ctx.wizard.steps[ctx.wizard.cursor-1](ctx);
+            console.log("ERROR HEREEEEE2");
+            return ctx.wizard.steps[ctx.wizard.cursor - 1](ctx);
           }
         }
 
@@ -872,7 +874,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         if (mainSteps.length === 1) {
           header = `<b>${mainStep.mainStep}</b>`;
         }
-        
+
         let progressBar = getProgressBar(mainSteps, msi + 1);
         let subProgressBar = getSubProgressBar(mainSteps[msi].steps, si + 1);
         if (step.step === "DONESTEP") {
@@ -890,20 +892,20 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           if (step.branchDone) {
             summary = step.branchDoneText;
 
-            let title = '';
+            let title = "";
 
             if (typeof step.title === "string") {
-              title = step.title
+              title = step.title;
             } else {
               try {
                 title = await step.title(
                   ctx.scene.state.userId,
                   ctx.scene.state.targetObject,
                   ctx
-                )
+                );
               } catch (e) {
-                console.log("ERROR HEREEEEE0")
-                return ctx.wizard.steps[ctx.wizard.cursor-1](ctx);
+                console.log("ERROR HEREEEEE0");
+                return ctx.wizard.steps[ctx.wizard.cursor - 1](ctx);
               }
             }
 
@@ -913,7 +915,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         }
 
         if (step.step === "DONESTEP_RESPONSE_CONFIRM") {
-          producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
+          await producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
           return;
           // header = "<b>Confirm to proceed?</b>";
           // progressBar = "";
@@ -921,7 +923,9 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         }
 
         const body = `${header}${
-          progressBar && subProgressBar?.length > 1 ? "\n\nSteps: " + subProgressBar + "" : ""
+          progressBar && subProgressBar?.length > 1
+            ? "\n\nSteps: " + subProgressBar + ""
+            : ""
         }${summary}`;
 
         const baseKeyboard = [] as any;
@@ -1057,7 +1061,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           si === mainSteps[msi].steps.length - 1
         ) {
           ctx.scene.leave();
-          producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
+          await producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
 
           const backButton = baseKeyboard.find((b: any) => b.text === "Back");
           if (backButton) {
@@ -1074,17 +1078,17 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             finalKeyboard.push([
               {
                 text: "Confirm",
-                callback_data: producerInitiator.finalConfirmationNeeded ? universalOnCompleteConfirmation :  universalOnComplete,
+                callback_data: producerInitiator.finalConfirmationNeeded
+                  ? universalOnCompleteConfirmation
+                  : universalOnComplete,
               },
             ]);
           }
         }
         try {
-          await ctx.deleteMessage()
-        } catch (e) {
-          
-        }
-        
+          await ctx.deleteMessage();
+        } catch (e) {}
+
         await ctx.replyWithHTML(body, {
           reply_markup: {
             inline_keyboard: finalKeyboard,
