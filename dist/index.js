@@ -2108,11 +2108,15 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           await ctx.deleteMessage();
         } catch (e) {
         }
-        await ctx.replyWithHTML(body, {
-          reply_markup: {
-            inline_keyboard: finalKeyboard
-          }
-        });
+        try {
+          await ctx.replyWithHTML(body, {
+            reply_markup: {
+              inline_keyboard: finalKeyboard
+            }
+          });
+        } catch (e) {
+          console.log("error failed replyWithHTML in TG Producer", e);
+        }
       };
       fns.push(fn);
     }
