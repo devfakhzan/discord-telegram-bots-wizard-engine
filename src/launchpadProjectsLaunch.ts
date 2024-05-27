@@ -925,7 +925,8 @@ export const getSummary = async (ctx:any, mainSteps: any, type: any, obj: any, s
       ? step.title
       : await step.title(
           ctx.scene.state.userId,
-          ctx.scene.state.targetObject
+          ctx.scene.state.targetObject,
+          ctx
         )}</b>\n${currentValueLabel}\n<b>${currentValue}</b>\n\n`;
     }
   }

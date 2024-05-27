@@ -791,7 +791,8 @@ var getSummary = async (ctx, mainSteps, type, obj, skipping) => {
       }
       summaryText += `<b>${typeof step.title === "string" ? step.title : await step.title(
         ctx.scene.state.userId,
-        ctx.scene.state.targetObject
+        ctx.scene.state.targetObject,
+        ctx
       )}</b>
 ${currentValueLabel}
 <b>${currentValue}</b>
@@ -1877,7 +1878,8 @@ ${key}:
 <u>Question</u>:       
 ${typeof step.title === "string" ? step.title : await step.title(
           ctx.scene.state.userId,
-          ctx.scene.state.targetObject
+          ctx.scene.state.targetObject,
+          ctx
         )}${dateRangeInfo}${multiSelectMenu}
 ${step.example ? "\n For example:\n " + step.example() + "\n" : ""}        
 ${currentValue ? currentValueLabel : ""}
@@ -1905,7 +1907,8 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             summary = step.branchDoneText;
             header = ` <b>\u2705 ${typeof step.title === "string" ? step.title : await step.title(
               ctx.scene.state.userId,
-              ctx.scene.state.targetObject
+              ctx.scene.state.targetObject,
+              ctx
             )}</b>
 
 `;

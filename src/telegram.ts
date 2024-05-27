@@ -842,7 +842,8 @@ ${
             ? step.title
             : await step.title(
                 ctx.scene.state.userId,
-                ctx.scene.state.targetObject
+                ctx.scene.state.targetObject,
+                ctx
               )
         }${dateRangeInfo}${multiSelectMenu}
 ${step.example ? "\n For example:\n " + step.example() + "\n" : ""}        
@@ -879,7 +880,8 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
                 ? step.title
                 : await step.title(
                     ctx.scene.state.userId,
-                    ctx.scene.state.targetObject
+                    ctx.scene.state.targetObject,
+                    ctx
                   )
             }</b>\n\n`;
             progressBar = "";
