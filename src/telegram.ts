@@ -331,7 +331,13 @@ const producer = (producerInitiator: BotProducerInitiator) => {
             ctx?.update?.callback_query?.data
               ? (ctx.update.callback_query.data = undefined)
               : null;
-            await ctx.reply("Invalid input. Please try again.");
+
+            if (previousStepObject?.validationError && typeof previousStepObject?.validationError === 'string') {
+              await ctx.reply(previousStepObject?.validationError);
+            } else {
+              await ctx.reply("Invalid input. Please try again.");
+            }
+            
             return;
           }
         }
@@ -836,16 +842,24 @@ const producer = (producerInitiator: BotProducerInitiator) => {
             break;
         }
 
+        let title;
+        if (typeof step.title === "string") {
+          title = step.title
+        } else {
+          try {
+            title = await step.title(
+              ctx.scene.state.userId,
+              ctx.scene.state.targetObject,
+              ctx
+            )
+          } catch (e) {
+            console.log("ERROR HEREEEEE2")
+            return ctx.wizard.steps[ctx.wizard.cursor-1](ctx);
+          }
+        }
+
         let regular = `\n\n<u>Question</u>:       
-${
-          typeof step.title === "string"
-            ? step.title
-            : await step.title(
-                ctx.scene.state.userId,
-                ctx.scene.state.targetObject,
-                ctx
-              )
-        }${dateRangeInfo}${multiSelectMenu}
+${title}${dateRangeInfo}${multiSelectMenu}
 ${step.example ? "\n For example:\n " + step.example() + "\n" : ""}        
 ${currentValue ? currentValueLabel : ""}
 ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
@@ -875,15 +889,25 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
 
           if (step.branchDone) {
             summary = step.branchDoneText;
-            header = ` <b>✅ ${
-              typeof step.title === "string"
-                ? step.title
-                : await step.title(
-                    ctx.scene.state.userId,
-                    ctx.scene.state.targetObject,
-                    ctx
-                  )
-            }</b>\n\n`;
+
+            let title = '';
+
+            if (typeof step.title === "string") {
+              title = step.title
+            } else {
+              try {
+                title = await step.title(
+                  ctx.scene.state.userId,
+                  ctx.scene.state.targetObject,
+                  ctx
+                )
+              } catch (e) {
+                console.log("ERROR HEREEEEE0")
+                return ctx.wizard.steps[ctx.wizard.cursor-1](ctx);
+              }
+            }
+
+            header = ` <b>✅ ${title}</b>\n\n`;
             progressBar = "";
           }
         }

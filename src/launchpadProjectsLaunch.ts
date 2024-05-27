@@ -921,13 +921,23 @@ export const getSummary = async (ctx:any, mainSteps: any, type: any, obj: any, s
           break;
       }
 
-      summaryText += `<b>${ typeof step.title === "string"
-      ? step.title
-      : await step.title(
-          ctx.scene.state.userId,
-          ctx.scene.state.targetObject,
-          ctx
-        )}</b>\n${currentValueLabel}\n<b>${currentValue}</b>\n\n`;
+      let title;
+      if (typeof step.title === "string") {
+        title = step.title
+      } else {
+        try {
+          title = await step.title(
+            ctx.scene.state.userId,
+            ctx.scene.state.targetObject,
+            ctx
+          )
+        } catch (e) {
+          console.log("ERROR HEREEEEE1")
+          return ctx.wizard.steps[ctx.wizard.cursor-1](ctx);
+        }
+      }
+
+      summaryText += `<b>${title}</b>\n${currentValueLabel}\n<b>${currentValue}</b>\n\n`;
     }
   }
 

@@ -752,11 +752,22 @@ var getSummary = async (ctx, mainSteps, type, obj, skipping) => {
           currentValueLabel = "Entered value:";
           break;
       }
-      summaryText += `<b>${typeof step.title === "string" ? step.title : await step.title(
-        ctx.scene.state.userId,
-        ctx.scene.state.targetObject,
-        ctx
-      )}</b>
+      let title;
+      if (typeof step.title === "string") {
+        title = step.title;
+      } else {
+        try {
+          title = await step.title(
+            ctx.scene.state.userId,
+            ctx.scene.state.targetObject,
+            ctx
+          );
+        } catch (e) {
+          console.log("ERROR HEREEEEE1");
+          return ctx.wizard.steps[ctx.wizard.cursor - 1](ctx);
+        }
+      }
+      summaryText += `<b>${title}</b>
 ${currentValueLabel}
 <b>${currentValue}</b>
 
@@ -1493,7 +1504,11 @@ var producer2 = (producerInitiator) => {
           if (!(previousStepObject == null ? void 0 : previousStepObject.validation(callbackData))) {
             ((_ga = ctx == null ? void 0 : ctx.message) == null ? void 0 : _ga.text) ? ctx.message.text = void 0 : null;
             ((_ia = (_ha = ctx == null ? void 0 : ctx.update) == null ? void 0 : _ha.callback_query) == null ? void 0 : _ia.data) ? ctx.update.callback_query.data = void 0 : null;
-            await ctx.reply("Invalid input. Please try again.");
+            if ((previousStepObject == null ? void 0 : previousStepObject.validationError) && typeof (previousStepObject == null ? void 0 : previousStepObject.validationError) === "string") {
+              await ctx.reply(previousStepObject == null ? void 0 : previousStepObject.validationError);
+            } else {
+              await ctx.reply("Invalid input. Please try again.");
+            }
             return;
           }
         }
@@ -1845,14 +1860,25 @@ ${key}:
             currentValueLabel = "Entered value:";
             break;
         }
+        let title;
+        if (typeof step.title === "string") {
+          title = step.title;
+        } else {
+          try {
+            title = await step.title(
+              ctx.scene.state.userId,
+              ctx.scene.state.targetObject,
+              ctx
+            );
+          } catch (e) {
+            console.log("ERROR HEREEEEE2");
+            return ctx.wizard.steps[ctx.wizard.cursor - 1](ctx);
+          }
+        }
         let regular = `
 
 <u>Question</u>:       
-${typeof step.title === "string" ? step.title : await step.title(
-          ctx.scene.state.userId,
-          ctx.scene.state.targetObject,
-          ctx
-        )}${dateRangeInfo}${multiSelectMenu}
+${title}${dateRangeInfo}${multiSelectMenu}
 ${step.example ? "\n For example:\n " + step.example() + "\n" : ""}        
 ${currentValue ? currentValueLabel : ""}
 ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
@@ -1877,11 +1903,22 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           progressBar = "";
           if (step.branchDone) {
             summary = step.branchDoneText;
-            header = ` <b>\u2705 ${typeof step.title === "string" ? step.title : await step.title(
-              ctx.scene.state.userId,
-              ctx.scene.state.targetObject,
-              ctx
-            )}</b>
+            let title2 = "";
+            if (typeof step.title === "string") {
+              title2 = step.title;
+            } else {
+              try {
+                title2 = await step.title(
+                  ctx.scene.state.userId,
+                  ctx.scene.state.targetObject,
+                  ctx
+                );
+              } catch (e) {
+                console.log("ERROR HEREEEEE0");
+                return ctx.wizard.steps[ctx.wizard.cursor - 1](ctx);
+              }
+            }
+            header = ` <b>\u2705 ${title2}</b>
 
 `;
             progressBar = "";
