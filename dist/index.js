@@ -1499,12 +1499,24 @@ var producer2 = (producerInitiator) => {
         }
         if (((__ = (_Z = ctx.update) == null ? void 0 : _Z.callback_query) == null ? void 0 : __.data) === universalOnCompleteConfirm) {
           ctx.scene.leave();
-          await producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
+          try {
+            await producerInitiator.onComplete(
+              ctx,
+              ctx.scene.state.targetObject
+            );
+          } catch (e) {
+          }
           return;
         }
         if (((_aa = (_$ = ctx.update) == null ? void 0 : _$.callback_query) == null ? void 0 : _aa.data) === universalOnComplete) {
           ctx.scene.leave();
-          await producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
+          try {
+            await producerInitiator.onComplete(
+              ctx,
+              ctx.scene.state.targetObject
+            );
+          } catch (e) {
+          }
           return;
         }
         if (((_ca = (_ba = ctx.update) == null ? void 0 : _ba.callback_query) == null ? void 0 : _ca.data) === universalBack) {
@@ -1658,7 +1670,13 @@ var producer2 = (producerInitiator) => {
         }
         if (step.step === "DONESTEP" && !producerInitiator.finalConfirmationNeeded) {
           ctx.scene.leave();
-          await producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
+          try {
+            await producerInitiator.onComplete(
+              ctx,
+              ctx.scene.state.targetObject
+            );
+          } catch (e) {
+          }
           return;
         }
         if (current.dependsOn) {
@@ -1952,7 +1970,13 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           }
         }
         if (step.step === "DONESTEP_RESPONSE_CONFIRM") {
-          await producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
+          try {
+            await producerInitiator.onComplete(
+              ctx,
+              ctx.scene.state.targetObject
+            );
+          } catch (e) {
+          }
           return;
         }
         const body = `${header}${progressBar && (subProgressBar == null ? void 0 : subProgressBar.length) > 1 ? "\n\nSteps: " + subProgressBar : ""}${summary}`;
@@ -2058,7 +2082,13 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         }
         if (producerInitiator.onComplete && msi === mainSteps.length - 1 && si === mainSteps[msi].steps.length - 1) {
           ctx.scene.leave();
-          await producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
+          try {
+            await producerInitiator.onComplete(
+              ctx,
+              ctx.scene.state.targetObject
+            );
+          } catch (e) {
+          }
           const backButton = baseKeyboard.find((b) => b.text === "Back");
           if (backButton) {
             baseKeyboard.splice(baseKeyboard.indexOf(backButton), 1);

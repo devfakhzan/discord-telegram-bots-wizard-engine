@@ -275,13 +275,23 @@ const producer = (producerInitiator: BotProducerInitiator) => {
 
         if (ctx.update?.callback_query?.data === universalOnCompleteConfirm) {
           ctx.scene.leave();
-          await producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
+          try {
+            await producerInitiator.onComplete(
+              ctx,
+              ctx.scene.state.targetObject
+            );
+          } catch (e) {}
           return;
         }
 
         if (ctx.update?.callback_query?.data === universalOnComplete) {
           ctx.scene.leave();
-          await producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
+          try {
+            await producerInitiator.onComplete(
+              ctx,
+              ctx.scene.state.targetObject
+            );
+          } catch (e) {}
           return;
         }
 
@@ -523,7 +533,12 @@ const producer = (producerInitiator: BotProducerInitiator) => {
           !producerInitiator.finalConfirmationNeeded
         ) {
           ctx.scene.leave();
-          await producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
+          try {
+            await producerInitiator.onComplete(
+              ctx,
+              ctx.scene.state.targetObject
+            );
+          } catch (e) {}
           return;
         }
 
@@ -915,7 +930,12 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         }
 
         if (step.step === "DONESTEP_RESPONSE_CONFIRM") {
-          await producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
+          try {
+            await producerInitiator.onComplete(
+              ctx,
+              ctx.scene.state.targetObject
+            );
+          } catch (e) {}
           return;
           // header = "<b>Confirm to proceed?</b>";
           // progressBar = "";
@@ -1061,8 +1081,12 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           si === mainSteps[msi].steps.length - 1
         ) {
           ctx.scene.leave();
-          await producerInitiator.onComplete(ctx, ctx.scene.state.targetObject);
-
+          try {
+            await producerInitiator.onComplete(
+              ctx,
+              ctx.scene.state.targetObject
+            );
+          } catch (e) {}
           const backButton = baseKeyboard.find((b: any) => b.text === "Back");
           if (backButton) {
             // Removes back button since user has completed the form
