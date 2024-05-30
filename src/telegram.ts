@@ -870,8 +870,10 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               ctx
             );
           } catch (e) {
-            console.log("ERROR HEREEEEE2");
-            return ctx.wizard.steps[ctx.wizard.cursor - 1](ctx);
+            const validBackStep = ctx.wizard.cursor-2 > -1 ? ctx.wizard.cursor-2 : 0;
+            console.log(`[Location: 1] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+            await ctx.wizard.selectStep(validBackStep);
+            return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
           }
         }
 
@@ -919,8 +921,10 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
                   ctx
                 );
               } catch (e) {
-                console.log("ERROR HEREEEEE0");
-                return ctx.wizard.steps[ctx.wizard.cursor - 1](ctx);
+                const validBackStep = ctx.wizard.cursor-2 > -1 ? ctx.wizard.cursor-2 : 0;
+                console.log(`[Location: 2] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+                await ctx.wizard.selectStep(validBackStep);
+                return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
               }
             }
 

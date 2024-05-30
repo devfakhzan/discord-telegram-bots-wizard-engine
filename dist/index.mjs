@@ -763,8 +763,10 @@ var getSummary = async (ctx, mainSteps, type, obj, skipping) => {
             ctx
           );
         } catch (e) {
-          console.log("ERROR HEREEEEE1");
-          return ctx.wizard.steps[ctx.wizard.cursor - 1](ctx);
+          const validBackStep = ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
+          console.log(`[Location: 3] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+          await ctx.wizard.selectStep(validBackStep);
+          return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
         }
       }
       summaryText += `<b>${title}</b>
@@ -1888,8 +1890,10 @@ ${key}:
               ctx
             );
           } catch (e) {
-            console.log("ERROR HEREEEEE2");
-            return ctx.wizard.steps[ctx.wizard.cursor - 1](ctx);
+            const validBackStep = ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
+            console.log(`[Location: 1] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+            await ctx.wizard.selectStep(validBackStep);
+            return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
           }
         }
         let regular = `
@@ -1931,8 +1935,10 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
                   ctx
                 );
               } catch (e) {
-                console.log("ERROR HEREEEEE0");
-                return ctx.wizard.steps[ctx.wizard.cursor - 1](ctx);
+                const validBackStep = ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
+                console.log(`[Location: 2] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+                await ctx.wizard.selectStep(validBackStep);
+                return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
               }
             }
             header = ` <b>\u2705 ${title2}</b>
