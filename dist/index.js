@@ -1505,6 +1505,10 @@ var producer2 = (producerInitiator) => {
               ctx.scene.state.targetObject
             );
           } catch (e) {
+            console.error("Error in onComplete", {
+              targetObject: ctx.scene.state.targetObject,
+              e
+            });
           }
           return;
         }
@@ -1516,6 +1520,10 @@ var producer2 = (producerInitiator) => {
               ctx.scene.state.targetObject
             );
           } catch (e) {
+            console.error("Error in onComplete", {
+              targetObject: ctx.scene.state.targetObject,
+              e
+            });
           }
           return;
         }
@@ -1676,6 +1684,10 @@ var producer2 = (producerInitiator) => {
               ctx.scene.state.targetObject
             );
           } catch (e) {
+            console.error("Error in onComplete", {
+              targetObject: ctx.scene.state.targetObject,
+              e
+            });
           }
           return;
         }
@@ -1976,6 +1988,10 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
               ctx.scene.state.targetObject
             );
           } catch (e) {
+            console.error("Error in onComplete", {
+              targetObject: ctx.scene.state.targetObject,
+              e
+            });
           }
           return;
         }
@@ -2088,6 +2104,10 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
               ctx.scene.state.targetObject
             );
           } catch (e) {
+            console.error("Error in onComplete", {
+              targetObject: ctx.scene.state.targetObject,
+              e
+            });
           }
           const backButton = baseKeyboard.find((b) => b.text === "Back");
           if (backButton) {

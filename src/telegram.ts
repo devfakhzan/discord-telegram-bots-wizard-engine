@@ -280,7 +280,12 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               ctx,
               ctx.scene.state.targetObject
             );
-          } catch (e) {}
+          } catch (e) {
+            console.error("Error in onComplete", {
+              targetObject: ctx.scene.state.targetObject,
+              e,
+            });
+          }
           return;
         }
 
@@ -291,7 +296,12 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               ctx,
               ctx.scene.state.targetObject
             );
-          } catch (e) {}
+          } catch (e) {
+            console.error("Error in onComplete", {
+              targetObject: ctx.scene.state.targetObject,
+              e,
+            });
+          }
           return;
         }
 
@@ -538,7 +548,12 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               ctx,
               ctx.scene.state.targetObject
             );
-          } catch (e) {}
+          } catch (e) {
+            console.error("Error in onComplete", {
+              targetObject: ctx.scene.state.targetObject,
+              e,
+            });
+          }
           return;
         }
 
@@ -935,7 +950,12 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
               ctx,
               ctx.scene.state.targetObject
             );
-          } catch (e) {}
+          } catch (e) {
+            console.error("Error in onComplete", {
+              targetObject: ctx.scene.state.targetObject,
+              e,
+            });
+          }
           return;
           // header = "<b>Confirm to proceed?</b>";
           // progressBar = "";
@@ -1086,7 +1106,12 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
               ctx,
               ctx.scene.state.targetObject
             );
-          } catch (e) {}
+          } catch (e) {
+            console.error("Error in onComplete", {
+              targetObject: ctx.scene.state.targetObject,
+              e,
+            });
+          }
           const backButton = baseKeyboard.find((b: any) => b.text === "Back");
           if (backButton) {
             // Removes back button since user has completed the form
