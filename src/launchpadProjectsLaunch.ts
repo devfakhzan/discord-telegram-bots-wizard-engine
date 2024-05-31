@@ -932,8 +932,10 @@ export const getSummary = async (ctx:any, mainSteps: any, type: any, obj: any, s
             ctx
           )
         } catch (e) {
-          console.log("ERROR HEREEEEE1")
-          return ctx.wizard.steps[ctx.wizard.cursor-1](ctx);
+          const validBackStep = ctx.wizard.cursor-2 > -1 ? ctx.wizard.cursor-2 : 0;
+          console.log(`[Location: 3] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+          await ctx.wizard.selectStep(validBackStep);
+          return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
         }
       }
 
