@@ -1903,7 +1903,9 @@ ${key}:
             );
           } catch (e) {
             const validBackStep = ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
-            console.log(`[Location: 1] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+            console.log(
+              `[Location: 1] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`
+            );
             await ctx.wizard.selectStep(validBackStep);
             return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
           }
@@ -1948,7 +1950,9 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
                 );
               } catch (e) {
                 const validBackStep = ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
-                console.log(`[Location: 2] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+                console.log(
+                  `[Location: 2] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`
+                );
                 await ctx.wizard.selectStep(validBackStep);
                 return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
               }
@@ -1960,6 +1964,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           }
         }
         if (step.step === "DONESTEP_RESPONSE_CONFIRM") {
+          ctx.scene.leave();
           try {
             await producerInitiator.onComplete(
               ctx,
