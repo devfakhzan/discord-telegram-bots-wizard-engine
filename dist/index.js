@@ -1945,6 +1945,11 @@ ${title}${dateRangeInfo}${multiSelectMenu}
 ${step.example ? "\n For example:\n " + step.example() + "\n" : ""}        
 ${currentValue ? currentValueLabel : ""}
 ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
+        if (mainStep.mainStepDynamicTitleOverride && typeof mainStep.mainStepDynamicTitleOverride === "function") {
+          mainStep.mainStep = await mainStep.mainStepDynamicTitleOverride(
+            ctx.scene.state.userId
+          );
+        }
         let summary = regular;
         let header = `<b>Main Step ${getEmojiNum(msi + 1)} of ${getEmojiNum(
           mainSteps.length
