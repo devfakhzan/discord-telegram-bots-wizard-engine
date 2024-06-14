@@ -280,7 +280,12 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               ctx,
               ctx.scene.state.targetObject
             );
-          } catch (e) {}
+          } catch (e) {
+            console.error("Error in onComplete", {
+              targetObject: ctx.scene.state.targetObject,
+              e,
+            });
+          }
           return;
         }
 
@@ -291,7 +296,12 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               ctx,
               ctx.scene.state.targetObject
             );
-          } catch (e) {}
+          } catch (e) {
+            console.error("Error in onComplete", {
+              targetObject: ctx.scene.state.targetObject,
+              e,
+            });
+          }
           return;
         }
 
@@ -541,7 +551,12 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               ctx,
               ctx.scene.state.targetObject
             );
-          } catch (e) {}
+          } catch (e) {
+            console.error("Error in onComplete", {
+              targetObject: ctx.scene.state.targetObject,
+              e,
+            });
+          }
           return;
         }
 
@@ -873,8 +888,11 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               ctx
             );
           } catch (e) {
-            const validBackStep = ctx.wizard.cursor-2 > -1 ? ctx.wizard.cursor-2 : 0;
-            console.log(`[Location: 1] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+            const validBackStep =
+              ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
+            console.log(
+              `[Location: 1] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`
+            );
             await ctx.wizard.selectStep(validBackStep);
             return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
           }
@@ -885,6 +903,15 @@ ${title}${dateRangeInfo}${multiSelectMenu}
 ${step.example ? "\n For example:\n " + step.example() + "\n" : ""}        
 ${currentValue ? currentValueLabel : ""}
 ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
+
+        if (
+          mainStep.mainStepDynamicTitleOverride &&
+          typeof mainStep.mainStepDynamicTitleOverride === "function"
+        ) {
+          mainStep.mainStep = await mainStep.mainStepDynamicTitleOverride(
+            ctx.scene.state.userId
+          );
+        }
 
         let summary = regular;
         let header = `<b>Main Step ${getEmojiNum(msi + 1)} of ${getEmojiNum(
@@ -924,8 +951,11 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
                   ctx
                 );
               } catch (e) {
-                const validBackStep = ctx.wizard.cursor-2 > -1 ? ctx.wizard.cursor-2 : 0;
-                console.log(`[Location: 2] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+                const validBackStep =
+                  ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
+                console.log(
+                  `[Location: 2] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`
+                );
                 await ctx.wizard.selectStep(validBackStep);
                 return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
               }
@@ -937,12 +967,18 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         }
 
         if (step.step === "DONESTEP_RESPONSE_CONFIRM") {
+          ctx.scene.leave();
           try {
             await producerInitiator.onComplete(
               ctx,
               ctx.scene.state.targetObject
             );
-          } catch (e) {}
+          } catch (e) {
+            console.error("Error in onComplete", {
+              targetObject: ctx.scene.state.targetObject,
+              e,
+            });
+          }
           return;
           // header = "<b>Confirm to proceed?</b>";
           // progressBar = "";
@@ -1093,7 +1129,12 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
               ctx,
               ctx.scene.state.targetObject
             );
-          } catch (e) {}
+          } catch (e) {
+            console.error("Error in onComplete", {
+              targetObject: ctx.scene.state.targetObject,
+              e,
+            });
+          }
           const backButton = baseKeyboard.find((b: any) => b.text === "Back");
           if (backButton) {
             // Removes back button since user has completed the form
