@@ -724,9 +724,9 @@ var getCurrentValue = async (ctx, step, value, targetObject, mainSteps) => {
       return value;
   }
 };
-var saveLaunchpadLaunchToDB = async (launchpadLaunch, userId, userType, UserDb) => {
-  let user = await UserDb.getOrCreateUser(userId, userType);
-  await UserDb.updateUser(user.userId, user.type, { ...user, launchpadLaunch });
+var saveSessionToDB = async (session, userId, userType, sessionDb) => {
+  let user = await sessionDb.getOrCreateUser(userId, userType);
+  await sessionDb.updateUser(user.userId, user.type, { ...user, session });
 };
 var getSummary = async (ctx, mainSteps, type, obj, skipping) => {
   let summaryText = "";
@@ -1402,7 +1402,7 @@ var producer2 = (producerInitiator) => {
           while (ctx.wizard.cursor < backToStep) {
             ctx.wizard.cursor++;
           }
-          ctx.wizard.steps[ctx.wizard.cursor](ctx);
+          await ctx.wizard.steps[ctx.wizard.cursor](ctx);
           return;
         }
         if ((_s = (_r = (_q = ctx.update) == null ? void 0 : _q.callback_query) == null ? void 0 : _r.data) == null ? void 0 : _s.includes("branch_")) {
@@ -1429,7 +1429,7 @@ var producer2 = (producerInitiator) => {
           );
           const validationResult = prevObj == null ? void 0 : prevObj.validation(val);
           if (!(validationResult == null ? void 0 : validationResult.success)) {
-            return ctx.reply(validationResult == null ? void 0 : validationResult.reason);
+            return await ctx.reply(validationResult == null ? void 0 : validationResult.reason);
           }
         }
         if ((((_B = (_A = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _A.steps[prev == null ? void 0 : prev.previousStep]) == null ? void 0 : _B.type) === "select" || ((_D = (_C = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _C.steps[prev == null ? void 0 : prev.previousStep]) == null ? void 0 : _D.type) === "check" || ((_F = (_E = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _E.steps[prev == null ? void 0 : prev.previousStep]) == null ? void 0 : _F.type) === "selectTwo") && ((_G = ctx == null ? void 0 : ctx.message) == null ? void 0 : _G.text) && !((_H = ctx.scene.state.skipping) == null ? void 0 : _H.find(
@@ -1526,11 +1526,11 @@ var producer2 = (producerInitiator) => {
           ctx.wizard.cursor--;
           ctx.wizard.cursor--;
           if (ctx.wizard.steps[ctx.wizard.cursor]) {
-            ctx.wizard.steps[ctx.wizard.cursor](ctx);
+            await ctx.wizard.steps[ctx.wizard.cursor](ctx);
             return;
           } else {
             ctx.wizard.cursor++;
-            ctx.wizard.steps[ctx.wizard.cursor](ctx);
+            await ctx.wizard.steps[ctx.wizard.cursor](ctx);
             return;
           }
         }
@@ -1547,6 +1547,9 @@ var producer2 = (producerInitiator) => {
             ((_ga = ctx == null ? void 0 : ctx.message) == null ? void 0 : _ga.text) ? ctx.message.text = void 0 : null;
             ((_ia = (_ha = ctx == null ? void 0 : ctx.update) == null ? void 0 : _ha.callback_query) == null ? void 0 : _ia.data) ? ctx.update.callback_query.data = void 0 : null;
             if ((previousStepObject == null ? void 0 : previousStepObject.validationError) && typeof (previousStepObject == null ? void 0 : previousStepObject.validationError) === "string") {
+              if (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
+                return;
+              }
               await ctx.reply(previousStepObject == null ? void 0 : previousStepObject.validationError);
             } else {
               await ctx.reply("Invalid input. Please try again.");
@@ -1591,12 +1594,12 @@ var producer2 = (producerInitiator) => {
                 };
                 const date = (0, import_dayjs3.default)(callbackData, dateTimeFormat);
                 if (!date.isValid()) {
-                  return ctx.reply(
+                  return await ctx.reply(
                     "Please enter a future date with the following format:\nDay/Month/Year Hour:Minute:Seconds\n\nFor example:\n" + (0, import_dayjs3.default)().add(1, "day").format(dateTimeFormat)
                   );
                 }
                 if (date.isBefore((0, import_dayjs3.default)())) {
-                  return ctx.reply(
+                  return await ctx.reply(
                     "Please enter a future date with the following format:\nDay/Month/Year Hour:Minute:Seconds\n\nFor example:\n" + (0, import_dayjs3.default)().add(1, "day").format(dateTimeFormat)
                   );
                 }
@@ -1614,7 +1617,7 @@ var producer2 = (producerInitiator) => {
                 callbackData = callbackData == null ? void 0 : callbackData.replace(/%/g, "");
                 const input = +(callbackData == null ? void 0 : callbackData.replace(/%/g, ""));
                 if (Number.isNaN(input) || input < 0) {
-                  return ctx.reply("Please enter a valid number");
+                  return await ctx.reply("Please enter a valid number");
                 }
                 const fundraiseRelease = readObject(
                   ctx.scene.state.targetObject,
@@ -1626,7 +1629,7 @@ var producer2 = (producerInitiator) => {
                   0
                 );
                 if (totalPerccentage + input > 100) {
-                  return ctx.reply(
+                  return await ctx.reply(
                     `Invalid percentage. You can only add ${100 - totalPerccentage}% left.`
                   );
                 }
@@ -1705,17 +1708,17 @@ var producer2 = (producerInitiator) => {
               switch ((_pa = (_oa = ctx.update) == null ? void 0 : _oa.callback_query) == null ? void 0 : _pa.data) {
                 case universalBack: {
                   ctx.wizard.cursor--;
-                  ctx.wizard.steps[ctx.wizard.cursor](ctx);
+                  await ctx.wizard.steps[ctx.wizard.cursor](ctx);
                   return;
                 }
                 case null: {
                   ctx.wizard.cursor--;
-                  ctx.wizard.steps[ctx.wizard.cursor](ctx);
+                  await ctx.wizard.steps[ctx.wizard.cursor](ctx);
                   return;
                 }
               }
               ctx.wizard.cursor++;
-              ctx.wizard.steps[ctx.wizard.cursor](ctx);
+              await ctx.wizard.steps[ctx.wizard.cursor](ctx);
               return;
             } else {
               ctx.scene.state.skipping = ctx.scene.state.skipping.filter(
@@ -1753,17 +1756,17 @@ var producer2 = (producerInitiator) => {
               switch ((_ra = (_qa = ctx.update) == null ? void 0 : _qa.callback_query) == null ? void 0 : _ra.data) {
                 case universalBack: {
                   ctx.wizard.cursor--;
-                  ctx.wizard.steps[ctx.wizard.cursor](ctx);
+                  await ctx.wizard.steps[ctx.wizard.cursor](ctx);
                   return;
                 }
                 case null: {
                   ctx.wizard.cursor--;
-                  ctx.wizard.steps[ctx.wizard.cursor](ctx);
+                  await ctx.wizard.steps[ctx.wizard.cursor](ctx);
                   return;
                 }
               }
               ctx.wizard.cursor++;
-              ctx.wizard.steps[ctx.wizard.cursor](ctx);
+              await ctx.wizard.steps[ctx.wizard.cursor](ctx);
               return;
             } else {
               ctx.scene.state.skipping = ctx.scene.state.skipping.filter(
@@ -1790,17 +1793,17 @@ var producer2 = (producerInitiator) => {
               switch ((_ta = (_sa = ctx.update) == null ? void 0 : _sa.callback_query) == null ? void 0 : _ta.data) {
                 case universalBack: {
                   ctx.wizard.cursor--;
-                  ctx.wizard.steps[ctx.wizard.cursor](ctx);
+                  await ctx.wizard.steps[ctx.wizard.cursor](ctx);
                   return;
                 }
                 case null: {
                   ctx.wizard.cursor--;
-                  ctx.wizard.steps[ctx.wizard.cursor](ctx);
+                  await ctx.wizard.steps[ctx.wizard.cursor](ctx);
                   return;
                 }
               }
               ctx.wizard.cursor++;
-              ctx.wizard.steps[ctx.wizard.cursor](ctx);
+              await ctx.wizard.steps[ctx.wizard.cursor](ctx);
               return;
             } else {
               ctx.scene.state.skipping = ctx.scene.state.skipping.filter(
@@ -1815,7 +1818,7 @@ var producer2 = (producerInitiator) => {
             );
             if (dependsOnValue[dependsOn.type] === dependsOn.value) {
               ctx.wizard.cursor++;
-              ctx.wizard.steps[ctx.wizard.cursor](ctx);
+              await ctx.wizard.steps[ctx.wizard.cursor](ctx);
               return;
             }
           }
@@ -2078,7 +2081,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         }
         if (!(msi === mainSteps.length - 1 && si === mainSteps[msi].steps.length - 1)) {
           ctx.wizard.next();
-          await saveLaunchpadLaunchToDB(
+          await saveSessionToDB(
             ctx.scene.state.targetObject,
             ctx.scene.state.userId,
             "telegram",
@@ -2087,7 +2090,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         } else {
         }
         if (producerInitiator.onComplete && msi === mainSteps.length - 1 && si === mainSteps[msi].steps.length - 1) {
-          ctx.scene.leave();
+          await ctx.scene.leave();
           try {
             await producerInitiator.onComplete(
               ctx,

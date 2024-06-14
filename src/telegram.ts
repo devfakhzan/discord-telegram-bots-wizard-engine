@@ -10,7 +10,7 @@ import {
   writeToObject,
   pushToObject,
   writeToLastItem,
-  saveLaunchpadLaunchToDB,
+  saveSessionToDB,
   universalContinue,
   universalSkip,
   getSummary,
@@ -120,7 +120,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
           while (ctx.wizard.cursor < backToStep) {
             ctx.wizard.cursor++;
           }
-          ctx.wizard.steps[ctx.wizard.cursor](ctx);
+          await ctx.wizard.steps[ctx.wizard.cursor](ctx);
           return;
         }
 
@@ -160,7 +160,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
           const validationResult = prevObj?.validation(val);
 
           if (!validationResult?.success) {
-            return ctx.reply(validationResult?.reason);
+            return await ctx.reply(validationResult?.reason);
           }
         }
 
@@ -307,11 +307,11 @@ const producer = (producerInitiator: BotProducerInitiator) => {
           ctx.wizard.cursor--;
           ctx.wizard.cursor--;
           if (ctx.wizard.steps[ctx.wizard.cursor]) {
-            ctx.wizard.steps[ctx.wizard.cursor](ctx);
+            await ctx.wizard.steps[ctx.wizard.cursor](ctx);
             return;
           } else {
             ctx.wizard.cursor++;
-            ctx.wizard.steps[ctx.wizard.cursor](ctx);
+            await ctx.wizard.steps[ctx.wizard.cursor](ctx);
             return;
           }
         }
@@ -346,6 +346,9 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               previousStepObject?.validationError &&
               typeof previousStepObject?.validationError === "string"
             ) {
+              if (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
+                return;
+              }
               await ctx.reply(previousStepObject?.validationError);
             } else {
               await ctx.reply("Invalid input. Please try again.");
@@ -426,14 +429,14 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 const date = dayjs(callbackData, dateTimeFormat);
 
                 if (!date.isValid()) {
-                  return ctx.reply(
+                  return await ctx.reply(
                     "Please enter a future date with the following format:\nDay/Month/Year Hour:Minute:Seconds\n\nFor example:\n" +
                       dayjs().add(1, "day").format(dateTimeFormat)
                   );
                 }
 
                 if (date.isBefore(dayjs())) {
-                  return ctx.reply(
+                  return await ctx.reply(
                     "Please enter a future date with the following format:\nDay/Month/Year Hour:Minute:Seconds\n\nFor example:\n" +
                       dayjs().add(1, "day").format(dateTimeFormat)
                   );
@@ -454,7 +457,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 callbackData = callbackData?.replace(/%/g, "");
                 const input = +callbackData?.replace(/%/g, "");
                 if (Number.isNaN(input) || input < 0) {
-                  return ctx.reply("Please enter a valid number");
+                  return await ctx.reply("Please enter a valid number");
                 }
 
                 const fundraiseRelease = readObject(
@@ -470,7 +473,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 );
 
                 if (totalPerccentage + input > 100) {
-                  return ctx.reply(
+                  return await ctx.reply(
                     `Invalid percentage. You can only add ${
                       100 - totalPerccentage
                     }% left.`
@@ -579,19 +582,19 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 case universalBack: {
                   //ctx.wizard.cursor--;
                   ctx.wizard.cursor--;
-                  ctx.wizard.steps[ctx.wizard.cursor](ctx);
+                  await ctx.wizard.steps[ctx.wizard.cursor](ctx);
                   //ctx.update.callback_query.data = null;
                   return;
                 }
                 case null: {
                   ctx.wizard.cursor--;
-                  ctx.wizard.steps[ctx.wizard.cursor](ctx);
+                  await ctx.wizard.steps[ctx.wizard.cursor](ctx);
                   //ctx.update.callback_query.data = null;
                   return;
                 }
               }
               ctx.wizard.cursor++;
-              ctx.wizard.steps[ctx.wizard.cursor](ctx);
+              await ctx.wizard.steps[ctx.wizard.cursor](ctx);
 
               return;
             } else {
@@ -646,20 +649,20 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 case universalBack: {
                   //ctx.wizard.cursor--;
                   ctx.wizard.cursor--;
-                  ctx.wizard.steps[ctx.wizard.cursor](ctx);
+                  await ctx.wizard.steps[ctx.wizard.cursor](ctx);
                   //ctx.update.callback_query.data = null;
                   return;
                 }
                 case null: {
                   ctx.wizard.cursor--;
-                  ctx.wizard.steps[ctx.wizard.cursor](ctx);
+                  await ctx.wizard.steps[ctx.wizard.cursor](ctx);
                   //ctx.update.callback_query.data = null;
                   return;
                 }
               }
 
               ctx.wizard.cursor++;
-              ctx.wizard.steps[ctx.wizard.cursor](ctx);
+              await ctx.wizard.steps[ctx.wizard.cursor](ctx);
               return;
             } else {
               ctx.scene.state.skipping = ctx.scene.state.skipping.filter(
@@ -704,20 +707,20 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 case universalBack: {
                   //ctx.wizard.cursor--;
                   ctx.wizard.cursor--;
-                  ctx.wizard.steps[ctx.wizard.cursor](ctx);
+                  await ctx.wizard.steps[ctx.wizard.cursor](ctx);
                   //ctx.update.callback_query.data = null;
                   return;
                 }
                 case null: {
                   ctx.wizard.cursor--;
-                  ctx.wizard.steps[ctx.wizard.cursor](ctx);
+                  await ctx.wizard.steps[ctx.wizard.cursor](ctx);
                   //ctx.update.callback_query.data = null;
                   return;
                 }
               }
 
               ctx.wizard.cursor++;
-              ctx.wizard.steps[ctx.wizard.cursor](ctx);
+              await ctx.wizard.steps[ctx.wizard.cursor](ctx);
               return;
             } else {
               ctx.scene.state.skipping = ctx.scene.state.skipping.filter(
@@ -738,7 +741,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
 
             if (dependsOnValue[dependsOn.type] === dependsOn.value) {
               ctx.wizard.cursor++;
-              ctx.wizard.steps[ctx.wizard.cursor](ctx);
+              await ctx.wizard.steps[ctx.wizard.cursor](ctx);
               return;
             }
           }
@@ -1070,7 +1073,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           )
         ) {
           ctx.wizard.next();
-          await saveLaunchpadLaunchToDB(
+          await saveSessionToDB(
             ctx.scene.state.targetObject,
             ctx.scene.state.userId,
             "telegram",
@@ -1084,7 +1087,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           msi === mainSteps.length - 1 &&
           si === mainSteps[msi].steps.length - 1
         ) {
-          ctx.scene.leave();
+          await ctx.scene.leave();
           try {
             await producerInitiator.onComplete(
               ctx,

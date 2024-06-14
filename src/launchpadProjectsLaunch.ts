@@ -843,14 +843,14 @@ export const getCurrentValue = async (
   }
 };
 
-export const saveLaunchpadLaunchToDB = async (
-  launchpadLaunch: any,
+export const saveSessionToDB = async (
+  session: any,
   userId: any,
   userType: any,
-  UserDb: any,
+  sessionDb: any,
 ) => {
-  let user = await UserDb.getOrCreateUser(userId, userType);
-  await UserDb.updateUser(user.userId, user.type, { ...user, launchpadLaunch });
+  let user = await sessionDb.getOrCreateUser(userId, userType);
+  await sessionDb.updateUser(user.userId, user.type, { ...user, session });
 };
 
 export const getSummary = async (ctx:any, mainSteps: any, type: any, obj: any, skipping: any) => {
