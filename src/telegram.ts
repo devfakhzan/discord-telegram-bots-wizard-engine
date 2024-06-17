@@ -164,13 +164,11 @@ const producer = (producerInitiator: BotProducerInitiator) => {
           }
         }
 
+        const previousStep = mainSteps?.[prev?.previousMainStep]?.steps[prev?.previousStep];
         if (
-          (mainSteps?.[prev?.previousMainStep]?.steps[prev?.previousStep]
-            ?.type === "select" ||
-            mainSteps?.[prev?.previousMainStep]?.steps[prev?.previousStep]
-              ?.type === "check" ||
-            mainSteps?.[prev?.previousMainStep]?.steps[prev?.previousStep]
-              ?.type === "selectTwo") &&
+          (previousStep?.type === "select" ||
+            previousStep?.type === "check" ||
+            previousStep?.type === "selectTwo") &&
           ctx?.message?.text &&
           !ctx.scene.state.skipping?.find(
             (s: { mainStep: any; step: any }) =>
@@ -179,14 +177,79 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               //@ts-ignore
               s.step === prev?.previousStep &&
               s.step ===
-                mainSteps?.[prev?.previousMainStep]?.steps[prev?.previousStep]
-                  ?.step
+              previousStep?.step
           ) &&
-          !mainSteps?.[prev?.previousMainStep]?.steps[prev?.previousStep]
-            ?.inBranch
+          !previousStep?.inBranch
         ) {
           //ctx.wizard.cursor--;
           //ctx.wizard.steps[ctx.wizard.cursor](ctx);
+
+          //Input in select exception:
+
+          if (previousStep?.ifInputReceivedInstead && ctx?.message?.text) {
+            const dataToWrite = ctx?.message?.text;
+            const inputInstead = previousStep.ifInputReceivedInstead;
+            
+            let targetStepObject = null;
+            let targetStepObjectIndex = null;
+            for (const mainStep of mainSteps) {
+              for (const step of mainStep.steps) {
+                if (step.step === inputInstead.writeValueToStep) {
+                  targetStepObject = step;
+                  targetStepObjectIndex = mainStep.steps.findIndex((step: any) => step.step === inputInstead.writeValueToStep)
+                }
+              }
+            }
+
+         
+            if (targetStepObject) {
+              let result = writeToObject(
+                ctx.scene.state.targetObject,
+                targetStepObject,
+                targetStepObject.mapTo,
+                dataToWrite
+              );
+
+              if (targetStepObject?.validation && !targetStepObject?.validation?.(dataToWrite)) {
+                ctx?.message?.text ? (ctx.message.text = undefined) : null;
+                ctx?.update?.callback_query?.data
+                  ? (ctx.update.callback_query.data = undefined)
+                  : null;
+    
+                if (
+                  targetStepObject?.validationError &&
+                  typeof targetStepObject?.validationError === "string"
+                ) {
+                  if (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
+                    return;
+                  }
+                  await ctx.reply(targetStepObject?.validationError);
+                } else {
+                  await ctx.reply("Invalid input. Please try again.");
+                }
+    
+                return;
+              }
+
+              if (result === false) {
+                await ctx.reply("Invalid input. Please try again.");
+                return;
+              }
+
+              writeToObject(
+                ctx.scene.state.targetObject,
+                previousStep,
+                previousStep.mapTo,
+                inputInstead.writeThisStep
+              );
+
+              ctx.wizard.cursor = targetStepObjectIndex+1;
+              return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
+            }
+            
+            
+          }
+          
           await ctx.reply("Invalid input. Please try again.");
           return;
         }
@@ -932,6 +995,8 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             ctx.scene.state.targetObject,
             ctx.scene.state.skipping
           )) as string;
+
+          console.log(ctx.scene.state.targetObject)
 
           header = "<b>Summary</b>";
           progressBar = "";

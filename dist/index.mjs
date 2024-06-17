@@ -1343,7 +1343,7 @@ var producer2 = (producerInitiator) => {
     }
     for (let [si, step] of mainStep.steps.entries()) {
       let fn = async (ctx, TelegramClient, UserDb, targetObject, additionalFunctions) => {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa;
         try {
           await ctx.deleteMessage();
         } catch (e) {
@@ -1404,21 +1404,66 @@ var producer2 = (producerInitiator) => {
             return await ctx.reply(validationResult == null ? void 0 : validationResult.reason);
           }
         }
-        if ((((_B = (_A = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _A.steps[prev == null ? void 0 : prev.previousStep]) == null ? void 0 : _B.type) === "select" || ((_D = (_C = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _C.steps[prev == null ? void 0 : prev.previousStep]) == null ? void 0 : _D.type) === "check" || ((_F = (_E = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _E.steps[prev == null ? void 0 : prev.previousStep]) == null ? void 0 : _F.type) === "selectTwo") && ((_G = ctx == null ? void 0 : ctx.message) == null ? void 0 : _G.text) && !((_H = ctx.scene.state.skipping) == null ? void 0 : _H.find(
-          (s) => {
-            var _a2, _b2;
-            return (
-              //@ts-ignore
-              s.mainStep === (prev == null ? void 0 : prev.previousMainStep) && //@ts-ignore
-              s.step === (prev == null ? void 0 : prev.previousStep) && s.step === ((_b2 = (_a2 = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _a2.steps[prev == null ? void 0 : prev.previousStep]) == null ? void 0 : _b2.step)
-            );
+        const previousStep = (_A = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _A.steps[prev == null ? void 0 : prev.previousStep];
+        if (((previousStep == null ? void 0 : previousStep.type) === "select" || (previousStep == null ? void 0 : previousStep.type) === "check" || (previousStep == null ? void 0 : previousStep.type) === "selectTwo") && ((_B = ctx == null ? void 0 : ctx.message) == null ? void 0 : _B.text) && !((_C = ctx.scene.state.skipping) == null ? void 0 : _C.find(
+          (s) => (
+            //@ts-ignore
+            s.mainStep === (prev == null ? void 0 : prev.previousMainStep) && //@ts-ignore
+            s.step === (prev == null ? void 0 : prev.previousStep) && s.step === (previousStep == null ? void 0 : previousStep.step)
+          )
+        )) && !(previousStep == null ? void 0 : previousStep.inBranch)) {
+          if ((previousStep == null ? void 0 : previousStep.ifInputReceivedInstead) && ((_D = ctx == null ? void 0 : ctx.message) == null ? void 0 : _D.text)) {
+            const dataToWrite = (_E = ctx == null ? void 0 : ctx.message) == null ? void 0 : _E.text;
+            const inputInstead = previousStep.ifInputReceivedInstead;
+            let targetStepObject = null;
+            let targetStepObjectIndex = null;
+            for (const mainStep2 of mainSteps) {
+              for (const step2 of mainStep2.steps) {
+                if (step2.step === inputInstead.writeValueToStep) {
+                  targetStepObject = step2;
+                  targetStepObjectIndex = mainStep2.steps.findIndex((step3) => step3.step === inputInstead.writeValueToStep);
+                }
+              }
+            }
+            if (targetStepObject) {
+              let result = writeToObject(
+                ctx.scene.state.targetObject,
+                targetStepObject,
+                targetStepObject.mapTo,
+                dataToWrite
+              );
+              if ((targetStepObject == null ? void 0 : targetStepObject.validation) && !((_F = targetStepObject == null ? void 0 : targetStepObject.validation) == null ? void 0 : _F.call(targetStepObject, dataToWrite))) {
+                ((_G = ctx == null ? void 0 : ctx.message) == null ? void 0 : _G.text) ? ctx.message.text = void 0 : null;
+                ((_I = (_H = ctx == null ? void 0 : ctx.update) == null ? void 0 : _H.callback_query) == null ? void 0 : _I.data) ? ctx.update.callback_query.data = void 0 : null;
+                if ((targetStepObject == null ? void 0 : targetStepObject.validationError) && typeof (targetStepObject == null ? void 0 : targetStepObject.validationError) === "string") {
+                  if (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
+                    return;
+                  }
+                  await ctx.reply(targetStepObject == null ? void 0 : targetStepObject.validationError);
+                } else {
+                  await ctx.reply("Invalid input. Please try again.");
+                }
+                return;
+              }
+              if (result === false) {
+                await ctx.reply("Invalid input. Please try again.");
+                return;
+              }
+              writeToObject(
+                ctx.scene.state.targetObject,
+                previousStep,
+                previousStep.mapTo,
+                inputInstead.writeThisStep
+              );
+              ctx.wizard.cursor = targetStepObjectIndex + 1;
+              return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
+            }
           }
-        )) && !((_J = (_I = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _I.steps[prev == null ? void 0 : prev.previousStep]) == null ? void 0 : _J.inBranch)) {
           await ctx.reply("Invalid input. Please try again.");
           return;
         }
-        if (((_L = (_K = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _K.steps[prev == null ? void 0 : prev.previousStep]) == null ? void 0 : _L.type) === "list" && !((_N = (_M = ctx.update) == null ? void 0 : _M.callback_query) == null ? void 0 : _N.data) && ((_P = (_O = ctx.update) == null ? void 0 : _O.callback_query) == null ? void 0 : _P.data) !== null) {
-          if (!ctx.message || !((_Q = ctx.message) == null ? void 0 : _Q.text)) {
+        if (((_K = (_J = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _J.steps[prev == null ? void 0 : prev.previousStep]) == null ? void 0 : _K.type) === "list" && !((_M = (_L = ctx.update) == null ? void 0 : _L.callback_query) == null ? void 0 : _M.data) && ((_O = (_N = ctx.update) == null ? void 0 : _N.callback_query) == null ? void 0 : _O.data) !== null) {
+          if (!ctx.message || !((_P = ctx.message) == null ? void 0 : _P.text)) {
             await ctx.reply(
               `Enter a valid comma seperated country code list (E.g.: AF, AL).`
             );
@@ -1441,7 +1486,7 @@ var producer2 = (producerInitiator) => {
           }
           callbackData = ctx.message.text;
         }
-        if (((_S = (_R = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _R.steps[prev == null ? void 0 : prev.previousStep]) == null ? void 0 : _S.type) === "photo" && !((_U = (_T = ctx.update) == null ? void 0 : _T.callback_query) == null ? void 0 : _U.data) && ((_W = (_V = ctx.update) == null ? void 0 : _V.callback_query) == null ? void 0 : _W.data) !== null) {
+        if (((_R = (_Q = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _Q.steps[prev == null ? void 0 : prev.previousStep]) == null ? void 0 : _R.type) === "photo" && !((_T = (_S = ctx.update) == null ? void 0 : _S.callback_query) == null ? void 0 : _T.data) && ((_V = (_U = ctx.update) == null ? void 0 : _U.callback_query) == null ? void 0 : _V.data) !== null) {
           if (!ctx.message || !ctx.message.photo) {
             await ctx.reply(
               `Upload a photo. Select "Compress the image" and try again.`
@@ -1469,9 +1514,9 @@ var producer2 = (producerInitiator) => {
           callbackData = tokenLogoUrl.replace("ipfs://", "").split("/")[0];
           await ctx.reply("Logo Uploaded!");
         }
-        if (((_Y = (_X = ctx.update) == null ? void 0 : _X.callback_query) == null ? void 0 : _Y.data) === universalOnCompleteConfirmation) {
+        if (((_X = (_W = ctx.update) == null ? void 0 : _W.callback_query) == null ? void 0 : _X.data) === universalOnCompleteConfirmation) {
         }
-        if (((__ = (_Z = ctx.update) == null ? void 0 : _Z.callback_query) == null ? void 0 : __.data) === universalOnCompleteConfirm) {
+        if (((_Z = (_Y = ctx.update) == null ? void 0 : _Y.callback_query) == null ? void 0 : _Z.data) === universalOnCompleteConfirm) {
           ctx.scene.leave();
           try {
             await producerInitiator.onComplete(
@@ -1486,7 +1531,7 @@ var producer2 = (producerInitiator) => {
           }
           return;
         }
-        if (((_aa = (_$ = ctx.update) == null ? void 0 : _$.callback_query) == null ? void 0 : _aa.data) === universalOnComplete) {
+        if (((_$ = (__ = ctx.update) == null ? void 0 : __.callback_query) == null ? void 0 : _$.data) === universalOnComplete) {
           ctx.scene.leave();
           try {
             await producerInitiator.onComplete(
@@ -1501,7 +1546,7 @@ var producer2 = (producerInitiator) => {
           }
           return;
         }
-        if (((_ca = (_ba = ctx.update) == null ? void 0 : _ba.callback_query) == null ? void 0 : _ca.data) === universalBack) {
+        if (((_ba = (_aa = ctx.update) == null ? void 0 : _aa.callback_query) == null ? void 0 : _ba.data) === universalBack) {
           ctx.update.callback_query.data = null;
           ctx.wizard.cursor--;
           ctx.wizard.cursor--;
@@ -1516,16 +1561,16 @@ var producer2 = (producerInitiator) => {
         }
         let previousStepObject = (
           //@ts-ignore
-          (_ea = (_da = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _da.steps) == null ? void 0 : _ea[prev == null ? void 0 : prev.previousStep]
+          (_da = (_ca = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _ca.steps) == null ? void 0 : _da[prev == null ? void 0 : prev.previousStep]
         );
         if (prev && //@ts-ignore
-        !((_fa = ctx.scene.state.skipping) == null ? void 0 : _fa.find(
+        !((_ea = ctx.scene.state.skipping) == null ? void 0 : _ea.find(
           (s) => s.mainStep === (prev == null ? void 0 : prev.previousMainStep) && s.step === (prev == null ? void 0 : prev.previousStep) && s.branch === mainSteps
         )) && //@ts-ignore
         (previousStepObject == null ? void 0 : previousStepObject.validation) && callbackData !== void 0 && previousStepObject.type !== "branch") {
           if (!(previousStepObject == null ? void 0 : previousStepObject.validation(callbackData))) {
-            ((_ga = ctx == null ? void 0 : ctx.message) == null ? void 0 : _ga.text) ? ctx.message.text = void 0 : null;
-            ((_ia = (_ha = ctx == null ? void 0 : ctx.update) == null ? void 0 : _ha.callback_query) == null ? void 0 : _ia.data) ? ctx.update.callback_query.data = void 0 : null;
+            ((_fa = ctx == null ? void 0 : ctx.message) == null ? void 0 : _fa.text) ? ctx.message.text = void 0 : null;
+            ((_ha = (_ga = ctx == null ? void 0 : ctx.update) == null ? void 0 : _ga.callback_query) == null ? void 0 : _ha.data) ? ctx.update.callback_query.data = void 0 : null;
             if ((previousStepObject == null ? void 0 : previousStepObject.validationError) && typeof (previousStepObject == null ? void 0 : previousStepObject.validationError) === "string") {
               if (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
                 return;
@@ -1542,7 +1587,7 @@ var producer2 = (producerInitiator) => {
           mapTos = typeof (previousStepObject == null ? void 0 : previousStepObject.mapTo) === "string" ? previousStepObject == null ? void 0 : previousStepObject.mapTo : JSON.parse(JSON.stringify(previousStepObject == null ? void 0 : previousStepObject.mapTo));
         }
         if (callbackData !== universalBack && callbackData !== null && callbackData !== void 0) {
-          if (previousStepObject && !((_ja = ctx.scene.state.skipping) == null ? void 0 : _ja.find(
+          if (previousStepObject && !((_ia = ctx.scene.state.skipping) == null ? void 0 : _ia.find(
             (s) => s.mainStep === (prev == null ? void 0 : prev.previousMainStep) && s.step === (prev == null ? void 0 : prev.previousStep) && s.branch === mainSteps
           )) && mapTos) {
             if (!previousStepObject.inBranch) {
@@ -1633,9 +1678,9 @@ var producer2 = (producerInitiator) => {
                 console.log(
                   "ACTION HERE",
                   prevObj == null ? void 0 : prevObj.action,
-                  (_la = (_ka = ctx.update) == null ? void 0 : _ka.callback_query) == null ? void 0 : _la.data
+                  (_ka = (_ja = ctx.update) == null ? void 0 : _ja.callback_query) == null ? void 0 : _ka.data
                 );
-                if (((_na = (_ma = ctx.update) == null ? void 0 : _ma.callback_query) == null ? void 0 : _na.data) === "false" && prevObj.actionNoBackTomainBranch) {
+                if (((_ma = (_la = ctx.update) == null ? void 0 : _la.callback_query) == null ? void 0 : _ma.data) === "false" && prevObj.actionNoBackTomainBranch) {
                   ctx.update.callback_query.data = void 0;
                   ctx.scene.state.in_branch = false;
                   await ctx.scene.enter(
@@ -1689,7 +1734,7 @@ var producer2 = (producerInitiator) => {
               )) {
                 ctx.scene.state.skipping.push(currentPosition);
               }
-              switch ((_pa = (_oa = ctx.update) == null ? void 0 : _oa.callback_query) == null ? void 0 : _pa.data) {
+              switch ((_oa = (_na = ctx.update) == null ? void 0 : _na.callback_query) == null ? void 0 : _oa.data) {
                 case universalBack: {
                   ctx.wizard.cursor--;
                   await ctx.wizard.steps[ctx.wizard.cursor](ctx);
@@ -1737,7 +1782,7 @@ var producer2 = (producerInitiator) => {
               )) {
                 ctx.scene.state.skipping.push(currentPosition);
               }
-              switch ((_ra = (_qa = ctx.update) == null ? void 0 : _qa.callback_query) == null ? void 0 : _ra.data) {
+              switch ((_qa = (_pa = ctx.update) == null ? void 0 : _pa.callback_query) == null ? void 0 : _qa.data) {
                 case universalBack: {
                   ctx.wizard.cursor--;
                   await ctx.wizard.steps[ctx.wizard.cursor](ctx);
@@ -1774,7 +1819,7 @@ var producer2 = (producerInitiator) => {
               )) {
                 ctx.scene.state.skipping.push(currentPosition);
               }
-              switch ((_ta = (_sa = ctx.update) == null ? void 0 : _sa.callback_query) == null ? void 0 : _ta.data) {
+              switch ((_sa = (_ra = ctx.update) == null ? void 0 : _ra.callback_query) == null ? void 0 : _sa.data) {
                 case universalBack: {
                   ctx.wizard.cursor--;
                   await ctx.wizard.steps[ctx.wizard.cursor](ctx);
@@ -1942,6 +1987,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             ctx.scene.state.targetObject,
             ctx.scene.state.skipping
           );
+          console.log(ctx.scene.state.targetObject);
           header = "<b>Summary</b>";
           progressBar = "";
           if (step.branchDone) {
