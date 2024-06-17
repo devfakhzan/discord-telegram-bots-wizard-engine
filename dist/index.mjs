@@ -1987,7 +1987,6 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             ctx.scene.state.targetObject,
             ctx.scene.state.skipping
           );
-          console.log(ctx.scene.state.targetObject);
           header = "<b>Summary</b>";
           progressBar = "";
           if (step.branchDone) {

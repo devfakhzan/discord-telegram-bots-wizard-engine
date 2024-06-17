@@ -996,8 +996,6 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             ctx.scene.state.skipping
           )) as string;
 
-          console.log(ctx.scene.state.targetObject)
-
           header = "<b>Summary</b>";
           progressBar = "";
 
