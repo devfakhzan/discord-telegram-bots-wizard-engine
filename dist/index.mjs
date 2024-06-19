@@ -687,10 +687,6 @@ var getCurrentValue = async (ctx, step, value, targetObject, mainSteps) => {
       return value;
   }
 };
-var saveSessionToDB = async (session, userId, userType, sessionDb) => {
-  let user = await sessionDb.getOrCreateUser(userId, userType);
-  await sessionDb.updateUser(user.userId, user.type, { ...user, session });
-};
 var getSummary = async (ctx, mainSteps, type, obj, skipping) => {
   let summaryText = "";
   let usedMainSteps = [];
@@ -2124,12 +2120,6 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         }
         if (!(msi === mainSteps.length - 1 && si === mainSteps[msi].steps.length - 1)) {
           ctx.wizard.next();
-          await saveSessionToDB(
-            ctx.scene.state.targetObject,
-            ctx.scene.state.userId,
-            "telegram",
-            UserDb
-          );
         } else {
         }
         if (producerInitiator.onComplete && msi === mainSteps.length - 1 && si === mainSteps[msi].steps.length - 1) {

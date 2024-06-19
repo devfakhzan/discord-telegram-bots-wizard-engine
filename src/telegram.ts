@@ -1172,12 +1172,12 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           )
         ) {
           ctx.wizard.next();
-          await saveSessionToDB(
-            ctx.scene.state.targetObject,
-            ctx.scene.state.userId,
-            "telegram",
-            UserDb
-          );
+          // await saveSessionToDB(
+          //   ctx.scene.state.targetObject,
+          //   ctx.scene.state.userId,
+          //   "telegram",
+          //   UserDb
+          // );
         } else {
         }
 
