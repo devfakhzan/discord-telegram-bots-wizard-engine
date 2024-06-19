@@ -85,6 +85,13 @@ const producer = (producerInitiator: BotProducerInitiator) => {
           );
           ctx.scene.state.userId =
             ctx?.update?.callback_query?.from?.id || ctx?.message?.from.id;
+
+          ctx.scene.state.user = await UserDb.getOrCreateUser(
+            ctx.scene.state.userId,
+            "telegram"
+          );
+
+          console.log("ctx.scene.state.user", ctx.scene.state.user);
           ctx.scene.state.skipping = [];
         }
 
@@ -164,7 +171,8 @@ const producer = (producerInitiator: BotProducerInitiator) => {
           }
         }
 
-        const previousStep = mainSteps?.[prev?.previousMainStep]?.steps[prev?.previousStep];
+        const previousStep =
+          mainSteps?.[prev?.previousMainStep]?.steps[prev?.previousStep];
         if (
           (previousStep?.type === "select" ||
             previousStep?.type === "check" ||
@@ -176,8 +184,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               s.mainStep === prev?.previousMainStep &&
               //@ts-ignore
               s.step === prev?.previousStep &&
-              s.step ===
-              previousStep?.step
+              s.step === previousStep?.step
           ) &&
           !previousStep?.inBranch
         ) {
@@ -189,19 +196,20 @@ const producer = (producerInitiator: BotProducerInitiator) => {
           if (previousStep?.ifInputReceivedInstead && ctx?.message?.text) {
             const dataToWrite = ctx?.message?.text;
             const inputInstead = previousStep.ifInputReceivedInstead;
-            
+
             let targetStepObject = null;
             let targetStepObjectIndex = null;
             for (const mainStep of mainSteps) {
               for (const step of mainStep.steps) {
                 if (step.step === inputInstead.writeValueToStep) {
                   targetStepObject = step;
-                  targetStepObjectIndex = mainStep.steps.findIndex((step: any) => step.step === inputInstead.writeValueToStep)
+                  targetStepObjectIndex = mainStep.steps.findIndex(
+                    (step: any) => step.step === inputInstead.writeValueToStep
+                  );
                 }
               }
             }
 
-         
             if (targetStepObject) {
               let result = writeToObject(
                 ctx.scene.state.targetObject,
@@ -210,24 +218,31 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 dataToWrite
               );
 
-              if (targetStepObject?.validation && !targetStepObject?.validation?.(dataToWrite)) {
+              if (
+                targetStepObject?.validation &&
+                !targetStepObject?.validation?.(dataToWrite)
+              ) {
                 ctx?.message?.text ? (ctx.message.text = undefined) : null;
                 ctx?.update?.callback_query?.data
                   ? (ctx.update.callback_query.data = undefined)
                   : null;
-    
+
                 if (
                   targetStepObject?.validationError &&
                   typeof targetStepObject?.validationError === "string"
                 ) {
-                  if (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
+                  if (
+                    await TelegramClient.exitWizardAndGoToButtonActionOrCommand(
+                      ctx
+                    )
+                  ) {
                     return;
                   }
                   await ctx.reply(targetStepObject?.validationError);
                 } else {
                   await ctx.reply("Invalid input. Please try again.");
                 }
-    
+
                 return;
               }
 
@@ -243,13 +258,11 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 inputInstead.writeThisStep
               );
 
-              ctx.wizard.cursor = targetStepObjectIndex+1;
+              ctx.wizard.cursor = targetStepObjectIndex + 1;
               return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
             }
-            
-            
           }
-          
+
           await ctx.reply("Invalid input. Please try again.");
           return;
         }
@@ -419,7 +432,9 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               previousStepObject?.validationError &&
               typeof previousStepObject?.validationError === "string"
             ) {
-              if (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
+              if (
+                await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)
+              ) {
                 return;
               }
               await ctx.reply(previousStepObject?.validationError);
@@ -946,7 +961,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
         } else {
           try {
             title = await step.title(
-              ctx.scene.state.userId,
+              ctx.scene.state.user,
               ctx.scene.state.targetObject,
               ctx
             );
@@ -972,7 +987,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           typeof mainStep.mainStepDynamicTitleOverride === "function"
         ) {
           mainStep.mainStep = await mainStep.mainStepDynamicTitleOverride(
-            ctx.scene.state.userId
+            ctx.scene.state.user
           );
         }
 
@@ -1009,7 +1024,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             } else {
               try {
                 title = await step.title(
-                  ctx.scene.state.userId,
+                  ctx.scene.state.user,
                   ctx.scene.state.targetObject,
                   ctx
                 );
@@ -1093,7 +1108,11 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         ) {
           let options = step.options;
           if (typeof step.options === "function") {
-            options = await step.options(ctx, ctx.scene.state.targetObject);
+            options = await step.options(
+              ctx,
+              ctx.scene.state.user,
+              ctx.scene.state.targetObject
+            );
           }
           if (step.options) {
             finalKeyboard.unshift(

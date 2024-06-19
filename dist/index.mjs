@@ -661,7 +661,7 @@ var getCurrentValue = async (ctx, step, value, targetObject, mainSteps) => {
     case "select":
       let options = step.options;
       if (typeof step.options === "function") {
-        options = await step.options(ctx, ctx.scene.state.targetObject);
+        options = await step.options(ctx, ctx.scene.state.user, ctx.scene.state.targetObject);
       }
       return (_a = options.find((o) => value == o.value)) == null ? void 0 : _a.text;
     case "input":
@@ -754,7 +754,7 @@ var getSummary = async (ctx, mainSteps, type, obj, skipping) => {
       } else {
         try {
           title = await step.title(
-            ctx.scene.state.userId,
+            ctx.scene.state.user,
             ctx.scene.state.targetObject,
             ctx
           );
@@ -1349,6 +1349,11 @@ var producer2 = (producerInitiator) => {
             JSON.stringify(targetObject)
           );
           ctx.scene.state.userId = ((_c = (_b = (_a = ctx == null ? void 0 : ctx.update) == null ? void 0 : _a.callback_query) == null ? void 0 : _b.from) == null ? void 0 : _c.id) || ((_d = ctx == null ? void 0 : ctx.message) == null ? void 0 : _d.from.id);
+          ctx.scene.state.user = await UserDb.getOrCreateUser(
+            ctx.scene.state.userId,
+            "telegram"
+          );
+          console.log("ctx.scene.state.user", ctx.scene.state.user);
           ctx.scene.state.skipping = [];
         }
         if (msi === 0 && si === 0 && !ctx.scene.state.targetObjectRaw) {
@@ -1417,7 +1422,9 @@ var producer2 = (producerInitiator) => {
               for (const step2 of mainStep2.steps) {
                 if (step2.step === inputInstead.writeValueToStep) {
                   targetStepObject = step2;
-                  targetStepObjectIndex = mainStep2.steps.findIndex((step3) => step3.step === inputInstead.writeValueToStep);
+                  targetStepObjectIndex = mainStep2.steps.findIndex(
+                    (step3) => step3.step === inputInstead.writeValueToStep
+                  );
                 }
               }
             }
@@ -1432,7 +1439,9 @@ var producer2 = (producerInitiator) => {
                 ((_G = ctx == null ? void 0 : ctx.message) == null ? void 0 : _G.text) ? ctx.message.text = void 0 : null;
                 ((_I = (_H = ctx == null ? void 0 : ctx.update) == null ? void 0 : _H.callback_query) == null ? void 0 : _I.data) ? ctx.update.callback_query.data = void 0 : null;
                 if ((targetStepObject == null ? void 0 : targetStepObject.validationError) && typeof (targetStepObject == null ? void 0 : targetStepObject.validationError) === "string") {
-                  if (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
+                  if (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(
+                    ctx
+                  )) {
                     return;
                   }
                   await ctx.reply(targetStepObject == null ? void 0 : targetStepObject.validationError);
@@ -1941,7 +1950,7 @@ ${key}:
         } else {
           try {
             title = await step.title(
-              ctx.scene.state.userId,
+              ctx.scene.state.user,
               ctx.scene.state.targetObject,
               ctx
             );
@@ -1963,7 +1972,7 @@ ${currentValue ? currentValueLabel : ""}
 ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         if (mainStep.mainStepDynamicTitleOverride && typeof mainStep.mainStepDynamicTitleOverride === "function") {
           mainStep.mainStep = await mainStep.mainStepDynamicTitleOverride(
-            ctx.scene.state.userId
+            ctx.scene.state.user
           );
         }
         let summary = regular;
@@ -1993,7 +2002,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             } else {
               try {
                 title2 = await step.title(
-                  ctx.scene.state.userId,
+                  ctx.scene.state.user,
                   ctx.scene.state.targetObject,
                   ctx
                 );
@@ -2057,7 +2066,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         if (step.type === "select" || step.type === "selectTwo" || step.type === "eitherTrue") {
           let options = step.options;
           if (typeof step.options === "function") {
-            options = await step.options(ctx, ctx.scene.state.targetObject);
+            options = await step.options(ctx, ctx.scene.state.user, ctx.scene.state.targetObject);
           }
           if (step.options) {
             finalKeyboard.unshift(

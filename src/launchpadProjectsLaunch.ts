@@ -815,7 +815,7 @@ export const getCurrentValue = async (
     case "select":
       let options = step.options;
       if (typeof step.options === "function") {
-        options = await step.options(ctx, ctx.scene.state.targetObject);
+        options = await step.options(ctx, ctx.scene.state.user, ctx.scene.state.targetObject);
       }
       return options.find((o: any) => value == o.value)?.text;
     case "input":
@@ -927,7 +927,7 @@ export const getSummary = async (ctx:any, mainSteps: any, type: any, obj: any, s
       } else {
         try {
           title = await step.title(
-            ctx.scene.state.userId,
+            ctx.scene.state.user,
             ctx.scene.state.targetObject,
             ctx
           )
