@@ -91,7 +91,6 @@ const producer = (producerInitiator: BotProducerInitiator) => {
             "telegram"
           );
 
-          console.log("ctx.scene.state.user", ctx.scene.state.user);
           ctx.scene.state.skipping = [];
         }
 
