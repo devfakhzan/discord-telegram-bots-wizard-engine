@@ -1353,7 +1353,6 @@ var producer2 = (producerInitiator) => {
             ctx.scene.state.userId,
             "telegram"
           );
-          console.log("ctx.scene.state.user", ctx.scene.state.user);
           ctx.scene.state.skipping = [];
         }
         if (msi === 0 && si === 0 && !ctx.scene.state.targetObjectRaw) {
@@ -2066,7 +2065,11 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         if (step.type === "select" || step.type === "selectTwo" || step.type === "eitherTrue") {
           let options = step.options;
           if (typeof step.options === "function") {
-            options = await step.options(ctx, ctx.scene.state.user, ctx.scene.state.targetObject);
+            options = await step.options(
+              ctx,
+              ctx.scene.state.user,
+              ctx.scene.state.targetObject
+            );
           }
           if (step.options) {
             finalKeyboard.unshift(
