@@ -72,38 +72,50 @@ const producer = (producerInitiator: BotProducerInitiator) => {
         targetObject: any,
         additionalFunctions: any
       ) => {
+        
         try {
           await ctx.deleteMessage();
         } catch (e) {
           // console.log("Error deleting message", e);
         }
 
-        //Deep clone targetObject to use at the start
-        if (msi === 0 && si === 0 && !ctx.scene.state.targetObject) {
-          ctx.scene.state.targetObject = JSON.parse(
-            JSON.stringify(targetObject)
-          );
-          ctx.scene.state.userId =
-            ctx?.update?.callback_query?.from?.id || ctx?.message?.from.id;
 
-          ctx.scene.state.user = await UserDb.getOrCreateUser(
-            ctx.scene.state.userId,
-            "telegram"
-          );
-
-          ctx.scene.state.skipping = [];
-        }
-
-        if (msi === 0 && si === 0 && !ctx.scene.state.targetObjectRaw) {
-          ctx.scene.state.targetObjectRaw = JSON.parse(
-            JSON.stringify(targetObject)
-          );
-        }
-
-        if (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
+        if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
           return;
         }
         ctx.state.justEntered = false;
+
+        //Deep clone targetObject to use at the start
+        if (msi === 0 && si === 0) {
+          
+
+          if (!ctx.scene.state.targetObject) {
+            ctx.scene.state.targetObject = JSON.parse(
+              JSON.stringify(targetObject)
+            );
+          }
+
+          if (!ctx.scene.state.targetObjectRaw) {
+            ctx.scene.state.targetObjectRaw = JSON.parse(
+              JSON.stringify(targetObject)
+            );
+          }
+
+          if (!ctx.scene.state.userId || !ctx.scene.state.user) {
+            ctx.scene.state.userId =
+            ctx?.update?.callback_query?.from?.id || ctx?.message?.from.id;
+
+            ctx.scene.state.user = await UserDb.getOrCreateUser(
+              ctx.scene.state.userId,
+              "telegram"
+            );
+
+          }
+          
+          
+          
+          ctx.scene.state.skipping = [];
+        }
 
         let prev: any = getPreviousStep(mainSteps, msi, si);
         let current: any = mainSteps?.[msi]?.steps?.[si];
@@ -230,13 +242,10 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                   targetStepObject?.validationError &&
                   typeof targetStepObject?.validationError === "string"
                 ) {
-                  if (
-                    await TelegramClient.exitWizardAndGoToButtonActionOrCommand(
-                      ctx
-                    )
-                  ) {
+                  if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
                     return;
                   }
+                  ctx.state.justEntered = false;
                   await ctx.reply(targetStepObject?.validationError);
                 } else {
                   await ctx.reply("Invalid input. Please try again.");
@@ -431,11 +440,10 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               previousStepObject?.validationError &&
               typeof previousStepObject?.validationError === "string"
             ) {
-              if (
-                await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)
-              ) {
+              if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
                 return;
               }
+              ctx.state.justEntered = false;
               await ctx.reply(previousStepObject?.validationError);
             } else {
               await ctx.reply("Invalid input. Please try again.");

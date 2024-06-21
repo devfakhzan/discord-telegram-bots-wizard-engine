@@ -1372,26 +1372,30 @@ var producer2 = (producerInitiator) => {
           await ctx.deleteMessage();
         } catch (e) {
         }
-        if (msi === 0 && si === 0 && !ctx.scene.state.targetObject) {
-          ctx.scene.state.targetObject = JSON.parse(
-            JSON.stringify(targetObject)
-          );
-          ctx.scene.state.userId = ((_c = (_b = (_a = ctx == null ? void 0 : ctx.update) == null ? void 0 : _a.callback_query) == null ? void 0 : _b.from) == null ? void 0 : _c.id) || ((_d = ctx == null ? void 0 : ctx.message) == null ? void 0 : _d.from.id);
-          ctx.scene.state.user = await UserDb.getOrCreateUser(
-            ctx.scene.state.userId,
-            "telegram"
-          );
-          ctx.scene.state.skipping = [];
-        }
-        if (msi === 0 && si === 0 && !ctx.scene.state.targetObjectRaw) {
-          ctx.scene.state.targetObjectRaw = JSON.parse(
-            JSON.stringify(targetObject)
-          );
-        }
-        if (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
+        if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
           return;
         }
         ctx.state.justEntered = false;
+        if (msi === 0 && si === 0) {
+          if (!ctx.scene.state.targetObject) {
+            ctx.scene.state.targetObject = JSON.parse(
+              JSON.stringify(targetObject)
+            );
+          }
+          if (!ctx.scene.state.targetObjectRaw) {
+            ctx.scene.state.targetObjectRaw = JSON.parse(
+              JSON.stringify(targetObject)
+            );
+          }
+          if (!ctx.scene.state.userId || !ctx.scene.state.user) {
+            ctx.scene.state.userId = ((_c = (_b = (_a = ctx == null ? void 0 : ctx.update) == null ? void 0 : _a.callback_query) == null ? void 0 : _b.from) == null ? void 0 : _c.id) || ((_d = ctx == null ? void 0 : ctx.message) == null ? void 0 : _d.from.id);
+            ctx.scene.state.user = await UserDb.getOrCreateUser(
+              ctx.scene.state.userId,
+              "telegram"
+            );
+          }
+          ctx.scene.state.skipping = [];
+        }
         let prev = getPreviousStep(mainSteps, msi, si);
         let current = (_f = (_e = mainSteps == null ? void 0 : mainSteps[msi]) == null ? void 0 : _e.steps) == null ? void 0 : _f[si];
         let next = getNextStep(mainSteps, msi, si);
@@ -1466,11 +1470,10 @@ var producer2 = (producerInitiator) => {
                 ((_G = ctx == null ? void 0 : ctx.message) == null ? void 0 : _G.text) ? ctx.message.text = void 0 : null;
                 ((_I = (_H = ctx == null ? void 0 : ctx.update) == null ? void 0 : _H.callback_query) == null ? void 0 : _I.data) ? ctx.update.callback_query.data = void 0 : null;
                 if ((targetStepObject == null ? void 0 : targetStepObject.validationError) && typeof (targetStepObject == null ? void 0 : targetStepObject.validationError) === "string") {
-                  if (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(
-                    ctx
-                  )) {
+                  if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
                     return;
                   }
+                  ctx.state.justEntered = false;
                   await ctx.reply(targetStepObject == null ? void 0 : targetStepObject.validationError);
                 } else {
                   await ctx.reply("Invalid input. Please try again.");
@@ -1604,9 +1607,10 @@ var producer2 = (producerInitiator) => {
             ((_fa = ctx == null ? void 0 : ctx.message) == null ? void 0 : _fa.text) ? ctx.message.text = void 0 : null;
             ((_ha = (_ga = ctx == null ? void 0 : ctx.update) == null ? void 0 : _ga.callback_query) == null ? void 0 : _ha.data) ? ctx.update.callback_query.data = void 0 : null;
             if ((previousStepObject == null ? void 0 : previousStepObject.validationError) && typeof (previousStepObject == null ? void 0 : previousStepObject.validationError) === "string") {
-              if (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
+              if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
                 return;
               }
+              ctx.state.justEntered = false;
               await ctx.reply(previousStepObject == null ? void 0 : previousStepObject.validationError);
             } else {
               await ctx.reply("Invalid input. Please try again.");
