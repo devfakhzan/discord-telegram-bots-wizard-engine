@@ -795,9 +795,20 @@ var getSummary = async (ctx, mainSteps, type, obj, skipping) => {
             ctx.scene.state.targetObject,
             ctx
           );
+          if (typeof title === "object") {
+            await ctx.reply(title.message, {
+              link_preview_options: {
+                is_disabled: true
+              }
+            });
+            const validBackStep = ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
+            console.log(`[Location: 3] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+            await ctx.wizard.selectStep(validBackStep);
+            return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
+          }
         } catch (e) {
           const validBackStep = ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
-          console.log(`[Location: 3] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+          console.log(`[Location: 3a] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
           await ctx.wizard.selectStep(validBackStep);
           return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
         }
@@ -1985,10 +1996,21 @@ ${key}:
               ctx.scene.state.targetObject,
               ctx
             );
+            if (typeof title === "object") {
+              await ctx.reply(title.message, {
+                link_preview_options: {
+                  is_disabled: true
+                }
+              });
+              const validBackStep = ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
+              console.log(`[Location: 1] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+              await ctx.wizard.selectStep(validBackStep);
+              return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
+            }
           } catch (e) {
             const validBackStep = ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
             console.log(
-              `[Location: 1] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`
+              `[Location: 1a] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`
             );
             await ctx.wizard.selectStep(validBackStep);
             return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
@@ -2027,7 +2049,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           progressBar = "";
           if (step.branchDone) {
             summary = step.branchDoneText;
-            let title2 = "";
+            let title2;
             if (typeof step.title === "string") {
               title2 = step.title;
             } else {
@@ -2037,10 +2059,21 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
                   ctx.scene.state.targetObject,
                   ctx
                 );
+                if (typeof title2 === "object") {
+                  await ctx.reply(title2.message, {
+                    link_preview_options: {
+                      is_disabled: true
+                    }
+                  });
+                  const validBackStep = ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
+                  console.log(`[Location: 2] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+                  await ctx.wizard.selectStep(validBackStep);
+                  return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
+                }
               } catch (e) {
                 const validBackStep = ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
                 console.log(
-                  `[Location: 2] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`
+                  `[Location: 2a] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`
                 );
                 await ctx.wizard.selectStep(validBackStep);
                 return await ctx.wizard.steps[ctx.wizard.cursor](ctx);

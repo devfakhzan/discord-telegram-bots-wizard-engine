@@ -931,9 +931,21 @@ export const getSummary = async (ctx:any, mainSteps: any, type: any, obj: any, s
             ctx.scene.state.targetObject,
             ctx
           )
+
+          if (typeof title === "object") {
+            await ctx.reply(title.message, {
+              link_preview_options: {
+                is_disabled: true
+              }
+            });
+            const validBackStep = ctx.wizard.cursor-2 > -1 ? ctx.wizard.cursor-2 : 0;
+            console.log(`[Location: 3] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+            await ctx.wizard.selectStep(validBackStep);
+            return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
+          }
         } catch (e) {
           const validBackStep = ctx.wizard.cursor-2 > -1 ? ctx.wizard.cursor-2 : 0;
-          console.log(`[Location: 3] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+          console.log(`[Location: 3a] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
           await ctx.wizard.selectStep(validBackStep);
           return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
         }
