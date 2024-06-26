@@ -85,35 +85,32 @@ const producer = (producerInitiator: BotProducerInitiator) => {
         }
         ctx.state.justEntered = false;
 
-        //Deep clone targetObject to use at the start
-        if (msi === 0 && si === 0) {
-          
+        //Deep clone targetObject to use
+        if (!ctx.scene.state.targetObject) {
+          ctx.scene.state.targetObject = JSON.parse(
+            JSON.stringify(targetObject)
+          );
+        }
 
-          if (!ctx.scene.state.targetObject) {
-            ctx.scene.state.targetObject = JSON.parse(
-              JSON.stringify(targetObject)
-            );
-          }
+        if (!ctx.scene.state.targetObjectRaw) {
+          ctx.scene.state.targetObjectRaw = JSON.parse(
+            JSON.stringify(targetObject)
+          );
+        }
 
-          if (!ctx.scene.state.targetObjectRaw) {
-            ctx.scene.state.targetObjectRaw = JSON.parse(
-              JSON.stringify(targetObject)
-            );
-          }
+        if (!ctx.scene.state.userId || !ctx.scene.state.user) {
+          ctx.scene.state.userId =
+          ctx?.update?.callback_query?.from?.id || ctx?.message?.from.id;
 
-          if (!ctx.scene.state.userId || !ctx.scene.state.user) {
-            ctx.scene.state.userId =
-            ctx?.update?.callback_query?.from?.id || ctx?.message?.from.id;
+          ctx.scene.state.user = await UserDb.getOrCreateUser(
+            ctx.scene.state.userId,
+            "telegram"
+          );
 
-            ctx.scene.state.user = await UserDb.getOrCreateUser(
-              ctx.scene.state.userId,
-              "telegram"
-            );
-
-          }
-          
-          
-          
+        }
+        
+        
+        if (!ctx?.scene?.state?.skipping) {
           ctx.scene.state.skipping = [];
         }
 
@@ -365,8 +362,10 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               ctx.scene.state.targetObject
             );
           } catch (e) {
-            console.error("Error in onComplete", {
-              targetObject: ctx.scene.state.targetObject,
+            console.error("Error in onComplete 1", {
+              targetObject: ctx.scene?.state?.targetObject,
+              userId: ctx.scene?.state?.userId,
+              user: ctx.scene?.state?.user,
               e,
             });
           }
@@ -381,8 +380,10 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               ctx.scene.state.targetObject
             );
           } catch (e) {
-            console.error("Error in onComplete", {
-              targetObject: ctx.scene.state.targetObject,
+            console.error("Error in onComplete 2", {
+              targetObject: ctx.scene?.state?.targetObject,
+              userId: ctx.scene?.state?.userId,
+              user: ctx.scene?.state?.user,
               e,
             });
           }
@@ -637,8 +638,10 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               ctx.scene.state.targetObject
             );
           } catch (e) {
-            console.error("Error in onComplete", {
-              targetObject: ctx.scene.state.targetObject,
+            console.error("Error in onComplete 3", {
+              targetObject: ctx.scene?.state?.targetObject,
+              userId: ctx.scene?.state?.userId,
+              user: ctx.scene?.state?.user,
               e,
             });
           }
@@ -1083,8 +1086,10 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
               ctx.scene.state.targetObject
             );
           } catch (e) {
-            console.error("Error in onComplete", {
-              targetObject: ctx.scene.state.targetObject,
+            console.error("Error in onComplete 4", {
+              targetObject: ctx.scene?.state?.targetObject,
+              userId: ctx.scene?.state?.userId,
+              user: ctx.scene?.state?.user,
               e,
             });
           }
@@ -1243,8 +1248,10 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
               ctx.scene.state.targetObject
             );
           } catch (e) {
-            console.error("Error in onComplete", {
-              targetObject: ctx.scene.state.targetObject,
+            console.error("Error in onComplete 5", {
+              targetObject: ctx.scene?.state?.targetObject,
+              userId: ctx.scene?.state?.userId,
+              user: ctx.scene?.state?.user,
               e,
             });
           }
