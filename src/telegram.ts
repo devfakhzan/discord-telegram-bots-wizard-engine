@@ -1008,9 +1008,12 @@ const producer = (producerInitiator: BotProducerInitiator) => {
             return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
           }
         }
+        let regular = "\n\n";
+        if (!step.disableQuestionText) {
+          regular += `<u>Question</u>:\n`;
+        }
 
-        let regular = `\n\n<u>Question</u>:       
-${title}${dateRangeInfo}${multiSelectMenu}
+        regular += `${title}${dateRangeInfo}${multiSelectMenu}
 ${step.example ? "\n For example:\n " + step.example() + "\n" : ""}        
 ${currentValue ? currentValueLabel : ""}
 ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
@@ -1305,6 +1308,15 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         try {
           await ctx.deleteMessage();
         } catch (e) {}
+
+        if (step.exitSceneButton) {
+          finalKeyboard.push([
+            {
+              text: step.exitSceneButton.text,
+              callback_data: step.exitSceneButton.value,
+            },
+          ]);
+        }
 
         try {
           await ctx.replyWithHTML(body, {

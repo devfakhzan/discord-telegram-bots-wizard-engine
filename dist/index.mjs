@@ -2175,10 +2175,12 @@ ${key}:
             return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
           }
         }
-        let regular = `
-
-<u>Question</u>:       
-${title}${dateRangeInfo}${multiSelectMenu}
+        let regular = "\n\n";
+        if (!step.disableQuestionText) {
+          regular += `<u>Question</u>:
+`;
+        }
+        regular += `${title}${dateRangeInfo}${multiSelectMenu}
 ${step.example ? "\n For example:\n " + step.example() + "\n" : ""}        
 ${currentValue ? currentValueLabel : ""}
 ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
@@ -2405,6 +2407,14 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         try {
           await ctx.deleteMessage();
         } catch (e) {
+        }
+        if (step.exitSceneButton) {
+          finalKeyboard.push([
+            {
+              text: step.exitSceneButton.text,
+              callback_data: step.exitSceneButton.value
+            }
+          ]);
         }
         try {
           await ctx.replyWithHTML(body, {
