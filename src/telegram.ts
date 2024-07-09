@@ -72,15 +72,16 @@ const producer = (producerInitiator: BotProducerInitiator) => {
         targetObject: any,
         additionalFunctions: any
       ) => {
-        
         try {
           await ctx.deleteMessage();
         } catch (e) {
           // console.log("Error deleting message", e);
         }
 
-
-        if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
+        if (
+          !ctx.state.justEntered &&
+          (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx))
+        ) {
           return;
         }
         ctx.state.justEntered = false;
@@ -100,16 +101,14 @@ const producer = (producerInitiator: BotProducerInitiator) => {
 
         if (!ctx.scene.state.userId || !ctx.scene.state.user) {
           ctx.scene.state.userId =
-          ctx?.update?.callback_query?.from?.id || ctx?.message?.from.id;
+            ctx?.update?.callback_query?.from?.id || ctx?.message?.from.id;
 
           ctx.scene.state.user = await UserDb.getOrCreateUser(
             ctx.scene.state.userId,
             "telegram"
           );
-
         }
-        
-        
+
         if (!ctx?.scene?.state?.skipping) {
           ctx.scene.state.skipping = [];
         }
@@ -239,7 +238,12 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                   targetStepObject?.validationError &&
                   typeof targetStepObject?.validationError === "string"
                 ) {
-                  if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
+                  if (
+                    !ctx.state.justEntered &&
+                    (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(
+                      ctx
+                    ))
+                  ) {
                     return;
                   }
                   ctx.state.justEntered = false;
@@ -441,7 +445,12 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               previousStepObject?.validationError &&
               typeof previousStepObject?.validationError === "string"
             ) {
-              if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
+              if (
+                !ctx.state.justEntered &&
+                (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(
+                  ctx
+                ))
+              ) {
                 return;
               }
               ctx.state.justEntered = false;
@@ -978,15 +987,17 @@ const producer = (producerInitiator: BotProducerInitiator) => {
             if (typeof title === "object") {
               await ctx.reply(title.message, {
                 link_preview_options: {
-                  is_disabled: true
-                }
+                  is_disabled: true,
+                },
               });
-              const validBackStep = ctx.wizard.cursor-2 > -1 ? ctx.wizard.cursor-2 : 0;
-              console.log(`[Location: 1] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+              const validBackStep =
+                ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
+              console.log(
+                `[Location: 1] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`
+              );
               await ctx.wizard.selectStep(validBackStep);
               return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
             }
-
           } catch (e) {
             const validBackStep =
               ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
@@ -1054,11 +1065,14 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
                 if (typeof title === "object") {
                   await ctx.reply(title.message, {
                     link_preview_options: {
-                      is_disabled: true
-                    }
+                      is_disabled: true,
+                    },
                   });
-                  const validBackStep = ctx.wizard.cursor-2 > -1 ? ctx.wizard.cursor-2 : 0;
-                  console.log(`[Location: 2] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`);
+                  const validBackStep =
+                    ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
+                  console.log(
+                    `[Location: 2] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`
+                  );
                   await ctx.wizard.selectStep(validBackStep);
                   return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
                 }
@@ -1151,14 +1165,25 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             );
           }
           if (step.options) {
-            finalKeyboard.unshift(
-              ...options.map((o: { text: any; value: any }) => [
-                {
-                  text: `${o?.text}`,
-                  callback_data: o.value,
-                },
-              ])
+            const finalOutput = options.map(
+              (o: MultiOptionObject | Array<MultiOptionObject>) => {
+                if (Array.isArray(o)) {
+                  return o.map((o: MultiOptionObject) => ({
+                    text: o.text,
+                    callback_data: o.value,
+                  }));
+                } else {
+                  return [
+                    {
+                      text: o.text,
+                      callback_data: o.value,
+                    },
+                  ];
+                }
+              }
             );
+
+            finalKeyboard.unshift(...finalOutput);
           }
         }
 
