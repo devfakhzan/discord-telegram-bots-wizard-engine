@@ -502,6 +502,7 @@ var writeToObject = (obj, previousStepObject, mapTo, value, raw = false) => {
     let finalValue = value;
     switch (previousStepObject.valueType) {
       case "number": {
+        finalValue = parseFloat(finalValue.replace(/[^\d.]/g, ""));
         if (isNaN(Number(finalValue))) {
           return false;
         }

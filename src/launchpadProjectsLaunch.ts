@@ -561,6 +561,9 @@ export const writeToObject = (
 
     switch (previousStepObject.valueType) {
       case "number": {
+        // Remove non-numeric characters except for the decimal point
+        finalValue = parseFloat(finalValue.replace(/[^\d.]/g, ""));
+
         if (isNaN(Number(finalValue))) {
           return false;
         }
