@@ -1037,7 +1037,12 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         }
 
         let progressBar = getProgressBar(mainSteps, msi + 1);
-        let subProgressBar = getSubProgressBar(mainSteps[msi].steps, si + 1);
+        let subProgressBar = "";
+
+        if (!mainStep.disableStepCounter) {
+          subProgressBar = getSubProgressBar(mainSteps[msi].steps, si + 1);
+        }
+
         if (step.step === "DONESTEP") {
           summary = (await getSummary(
             ctx,
@@ -1322,6 +1327,9 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           await ctx.replyWithHTML(body, {
             reply_markup: {
               inline_keyboard: finalKeyboard,
+            },
+            link_preview_options: {
+              is_disabled: true,
             },
           });
         } catch (e) {
