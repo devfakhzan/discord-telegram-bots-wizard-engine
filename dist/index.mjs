@@ -3,6 +3,7 @@ import customParseFormat from "dayjs/plugin/customParseFormat";
 import dayjs from "dayjs";
 import BigNumber from "bignumber.js";
 dayjs.extend(customParseFormat);
+var universalRefresh = "||universalRefresh||";
 var universalBack = "||universalBack||";
 var universalOnComplete = "||onComplete||";
 var universalOnCompleteConfirmation = "||onCompleteConfirmation||";
@@ -1526,7 +1527,7 @@ var producer2 = (producerInitiator) => {
     }
     for (let [si, step] of mainStep.steps.entries()) {
       let fn = async (ctx, TelegramClient, UserDb, targetObject, additionalFunctions) => {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia, _Ja, _Ka, _La, _Ma, _Na, _Oa, _Pa, _Qa, _Ra, _Sa, _Ta, _Ua, _Va, _Wa, _Xa, _Ya;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia, _Ja, _Ka, _La, _Ma, _Na, _Oa, _Pa, _Qa, _Ra, _Sa, _Ta, _Ua, _Va, _Wa, _Xa, _Ya, _Za, __a;
         try {
           await ctx.deleteMessage();
         } catch (e) {
@@ -1746,7 +1747,14 @@ var producer2 = (producerInitiator) => {
           }
           return;
         }
-        if (((_pa = (_oa = ctx.update) == null ? void 0 : _oa.callback_query) == null ? void 0 : _pa.data) === universalBack) {
+        if (((_pa = (_oa = ctx.update) == null ? void 0 : _oa.callback_query) == null ? void 0 : _pa.data) === universalRefresh) {
+          console.log("HERE");
+          ctx.update.callback_query.data = null;
+          await ctx.wizard.selectStep(ctx.wizard.cursor - 1);
+          await ctx.wizard.step(ctx);
+          return;
+        }
+        if (((_ra = (_qa = ctx.update) == null ? void 0 : _qa.callback_query) == null ? void 0 : _ra.data) === universalBack) {
           ctx.update.callback_query.data = null;
           ctx.wizard.cursor--;
           ctx.wizard.cursor--;
@@ -1761,16 +1769,16 @@ var producer2 = (producerInitiator) => {
         }
         let previousStepObject = (
           //@ts-ignore
-          (_ra = (_qa = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _qa.steps) == null ? void 0 : _ra[prev == null ? void 0 : prev.previousStep]
+          (_ta = (_sa = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _sa.steps) == null ? void 0 : _ta[prev == null ? void 0 : prev.previousStep]
         );
         if (prev && //@ts-ignore
-        !((_sa = ctx.scene.state.skipping) == null ? void 0 : _sa.find(
+        !((_ua = ctx.scene.state.skipping) == null ? void 0 : _ua.find(
           (s) => s.mainStep === (prev == null ? void 0 : prev.previousMainStep) && s.step === (prev == null ? void 0 : prev.previousStep) && s.branch === mainSteps
         )) && //@ts-ignore
         (previousStepObject == null ? void 0 : previousStepObject.validation) && callbackData !== void 0 && previousStepObject.type !== "branch") {
           if (!(previousStepObject == null ? void 0 : previousStepObject.validation(callbackData))) {
-            ((_ta = ctx == null ? void 0 : ctx.message) == null ? void 0 : _ta.text) ? ctx.message.text = void 0 : null;
-            ((_va = (_ua = ctx == null ? void 0 : ctx.update) == null ? void 0 : _ua.callback_query) == null ? void 0 : _va.data) ? ctx.update.callback_query.data = void 0 : null;
+            ((_va = ctx == null ? void 0 : ctx.message) == null ? void 0 : _va.text) ? ctx.message.text = void 0 : null;
+            ((_xa = (_wa = ctx == null ? void 0 : ctx.update) == null ? void 0 : _wa.callback_query) == null ? void 0 : _xa.data) ? ctx.update.callback_query.data = void 0 : null;
             if ((previousStepObject == null ? void 0 : previousStepObject.validationError) && typeof (previousStepObject == null ? void 0 : previousStepObject.validationError) === "string") {
               if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(
                 ctx
@@ -1790,7 +1798,7 @@ var producer2 = (producerInitiator) => {
           mapTos = typeof (previousStepObject == null ? void 0 : previousStepObject.mapTo) === "string" ? previousStepObject == null ? void 0 : previousStepObject.mapTo : JSON.parse(JSON.stringify(previousStepObject == null ? void 0 : previousStepObject.mapTo));
         }
         if (callbackData !== universalBack && callbackData !== null && callbackData !== void 0) {
-          if (previousStepObject && !((_wa = ctx.scene.state.skipping) == null ? void 0 : _wa.find(
+          if (previousStepObject && !((_ya = ctx.scene.state.skipping) == null ? void 0 : _ya.find(
             (s) => s.mainStep === (prev == null ? void 0 : prev.previousMainStep) && s.step === (prev == null ? void 0 : prev.previousStep) && s.branch === mainSteps
           )) && mapTos) {
             if (!previousStepObject.inBranch) {
@@ -1881,9 +1889,9 @@ var producer2 = (producerInitiator) => {
                 console.log(
                   "ACTION HERE",
                   prevObj == null ? void 0 : prevObj.action,
-                  (_ya = (_xa = ctx.update) == null ? void 0 : _xa.callback_query) == null ? void 0 : _ya.data
+                  (_Aa = (_za = ctx.update) == null ? void 0 : _za.callback_query) == null ? void 0 : _Aa.data
                 );
-                if (((_Aa = (_za = ctx.update) == null ? void 0 : _za.callback_query) == null ? void 0 : _Aa.data) === "false" && prevObj.actionNoBackTomainBranch) {
+                if (((_Ca = (_Ba = ctx.update) == null ? void 0 : _Ba.callback_query) == null ? void 0 : _Ca.data) === "false" && prevObj.actionNoBackTomainBranch) {
                   ctx.update.callback_query.data = void 0;
                   ctx.scene.state.in_branch = false;
                   await ctx.scene.enter(
@@ -1910,9 +1918,9 @@ var producer2 = (producerInitiator) => {
             );
           } catch (e) {
             console.error("Error in onComplete 3", {
-              targetObject: (_Ca = (_Ba = ctx.scene) == null ? void 0 : _Ba.state) == null ? void 0 : _Ca.targetObject,
-              userId: (_Ea = (_Da = ctx.scene) == null ? void 0 : _Da.state) == null ? void 0 : _Ea.userId,
-              user: (_Ga = (_Fa = ctx.scene) == null ? void 0 : _Fa.state) == null ? void 0 : _Ga.user,
+              targetObject: (_Ea = (_Da = ctx.scene) == null ? void 0 : _Da.state) == null ? void 0 : _Ea.targetObject,
+              userId: (_Ga = (_Fa = ctx.scene) == null ? void 0 : _Fa.state) == null ? void 0 : _Ga.userId,
+              user: (_Ia = (_Ha = ctx.scene) == null ? void 0 : _Ha.state) == null ? void 0 : _Ia.user,
               e
             });
           }
@@ -1939,7 +1947,7 @@ var producer2 = (producerInitiator) => {
               )) {
                 ctx.scene.state.skipping.push(currentPosition);
               }
-              switch ((_Ia = (_Ha = ctx.update) == null ? void 0 : _Ha.callback_query) == null ? void 0 : _Ia.data) {
+              switch ((_Ka = (_Ja = ctx.update) == null ? void 0 : _Ja.callback_query) == null ? void 0 : _Ka.data) {
                 case universalBack: {
                   ctx.wizard.cursor--;
                   await ctx.wizard.steps[ctx.wizard.cursor](ctx);
@@ -1987,7 +1995,7 @@ var producer2 = (producerInitiator) => {
               )) {
                 ctx.scene.state.skipping.push(currentPosition);
               }
-              switch ((_Ka = (_Ja = ctx.update) == null ? void 0 : _Ja.callback_query) == null ? void 0 : _Ka.data) {
+              switch ((_Ma = (_La = ctx.update) == null ? void 0 : _La.callback_query) == null ? void 0 : _Ma.data) {
                 case universalBack: {
                   ctx.wizard.cursor--;
                   await ctx.wizard.steps[ctx.wizard.cursor](ctx);
@@ -2024,7 +2032,7 @@ var producer2 = (producerInitiator) => {
               )) {
                 ctx.scene.state.skipping.push(currentPosition);
               }
-              switch ((_Ma = (_La = ctx.update) == null ? void 0 : _La.callback_query) == null ? void 0 : _Ma.data) {
+              switch ((_Oa = (_Na = ctx.update) == null ? void 0 : _Na.callback_query) == null ? void 0 : _Oa.data) {
                 case universalBack: {
                   ctx.wizard.cursor--;
                   await ctx.wizard.steps[ctx.wizard.cursor](ctx);
@@ -2261,9 +2269,9 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             );
           } catch (e) {
             console.error("Error in onComplete 4", {
-              targetObject: (_Oa = (_Na = ctx.scene) == null ? void 0 : _Na.state) == null ? void 0 : _Oa.targetObject,
-              userId: (_Qa = (_Pa = ctx.scene) == null ? void 0 : _Pa.state) == null ? void 0 : _Qa.userId,
-              user: (_Sa = (_Ra = ctx.scene) == null ? void 0 : _Ra.state) == null ? void 0 : _Sa.user,
+              targetObject: (_Qa = (_Pa = ctx.scene) == null ? void 0 : _Pa.state) == null ? void 0 : _Qa.targetObject,
+              userId: (_Sa = (_Ra = ctx.scene) == null ? void 0 : _Ra.state) == null ? void 0 : _Sa.userId,
+              user: (_Ua = (_Ta = ctx.scene) == null ? void 0 : _Ta.state) == null ? void 0 : _Ua.user,
               e
             });
           }
@@ -2275,6 +2283,12 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           baseKeyboard.push({
             text: "Back",
             callback_data: universalBack
+          });
+        }
+        if (step.showRefreshStepButton) {
+          baseKeyboard.push({
+            text: "\u{1F504} Refresh",
+            callback_data: universalRefresh
           });
         }
         if (step.step === "DONESTEP" && step.branchDone) {
@@ -2305,6 +2319,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
               ctx.scene.state.targetObject
             );
           }
+          console.log("OPT2", options);
           if (step.options) {
             const finalOutput = options.map(
               (o) => {
@@ -2387,9 +2402,9 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             );
           } catch (e) {
             console.error("Error in onComplete 5", {
-              targetObject: (_Ua = (_Ta = ctx.scene) == null ? void 0 : _Ta.state) == null ? void 0 : _Ua.targetObject,
-              userId: (_Wa = (_Va = ctx.scene) == null ? void 0 : _Va.state) == null ? void 0 : _Wa.userId,
-              user: (_Ya = (_Xa = ctx.scene) == null ? void 0 : _Xa.state) == null ? void 0 : _Ya.user,
+              targetObject: (_Wa = (_Va = ctx.scene) == null ? void 0 : _Va.state) == null ? void 0 : _Wa.targetObject,
+              userId: (_Ya = (_Xa = ctx.scene) == null ? void 0 : _Xa.state) == null ? void 0 : _Ya.userId,
+              user: (__a = (_Za = ctx.scene) == null ? void 0 : _Za.state) == null ? void 0 : __a.user,
               e
             });
           }

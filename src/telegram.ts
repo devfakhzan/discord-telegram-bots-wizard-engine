@@ -5,6 +5,7 @@ import {
   getNextStep,
   getProgressBar,
   universalBack,
+  universalRefresh,
   backToMainBranch,
   readObject,
   writeToObject,
@@ -391,6 +392,16 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               e,
             });
           }
+          return;
+        }
+
+        if (
+          ctx.update?.callback_query?.data === universalRefresh
+        ) {
+          console.log("HERE")
+          ctx.update.callback_query.data = null;
+          await ctx.wizard.selectStep(ctx.wizard.cursor-1);
+          await ctx.wizard.step(ctx)
           return;
         }
 
@@ -1136,6 +1147,13 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           });
         }
 
+        if (step.showRefreshStepButton) {
+          baseKeyboard.push({
+            text: "🔄 Refresh",
+            callback_data: universalRefresh,
+          });
+        }
+
         if (step.step === "DONESTEP" && step.branchDone) {
           baseKeyboard.push({
             text: "Continue",
@@ -1172,6 +1190,8 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
               ctx.scene.state.targetObject
             );
           }
+
+          console.log("OPT2", options)
           if (step.options) {
             const finalOutput = options.map(
               (o: MultiOptionObject | Array<MultiOptionObject>) => {

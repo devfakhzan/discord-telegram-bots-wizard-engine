@@ -14,6 +14,8 @@ import dayjs from "dayjs";
 import BigNumber from "bignumber.js";
 dayjs.extend(customParseFormat);
 
+export const universalRefresh = "||universalRefresh||";
+
 export const universalBack = "||universalBack||";
 
 export const universalOnComplete = "||onComplete||";
