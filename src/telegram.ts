@@ -235,6 +235,22 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                   ? (ctx.update.callback_query.data = undefined)
                   : null;
 
+                const validationErrorExtra = {};
+
+                if (targetStepObject?.validationErrorButtons) {
+                  //@ts-ignore
+                  validationErrorExtra.reply_markup = {
+                    inline_keyboard: [
+                      targetStepObject.validationErrorButtons.map(
+                        (arr: { text: string; value: string }) => ({
+                          text: arr.text,
+                          callback_data: arr.value,
+                        })
+                      ),
+                    ],
+                  };
+                }
+
                 if (
                   targetStepObject?.validationError &&
                   typeof targetStepObject?.validationError === "string"
@@ -248,9 +264,15 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                     return;
                   }
                   ctx.state.justEntered = false;
-                  await ctx.reply(targetStepObject?.validationError);
+                  await ctx.reply(
+                    targetStepObject?.validationError,
+                    validationErrorExtra
+                  );
                 } else {
-                  await ctx.reply("Invalid input. Please try again.");
+                  await ctx.reply(
+                    "Invalid input. Please try again.",
+                    validationErrorExtra
+                  );
                 }
 
                 return;
@@ -395,13 +417,10 @@ const producer = (producerInitiator: BotProducerInitiator) => {
           return;
         }
 
-        if (
-          ctx.update?.callback_query?.data === universalRefresh
-        ) {
-          console.log("HERE")
+        if (ctx.update?.callback_query?.data === universalRefresh) {
           ctx.update.callback_query.data = null;
-          await ctx.wizard.selectStep(ctx.wizard.cursor-1);
-          await ctx.wizard.step(ctx)
+          await ctx.wizard.selectStep(ctx.wizard.cursor - 1);
+          await ctx.wizard.step(ctx);
           return;
         }
 
@@ -452,6 +471,21 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               ? (ctx.update.callback_query.data = undefined)
               : null;
 
+            const validationErrorExtra = {};
+
+            if (previousStepObject?.validationErrorButtons) {
+              //@ts-ignore
+              validationErrorExtra.reply_markup = {
+                inline_keyboard: [
+                  previousStepObject.validationErrorButtons.map(
+                    (arr: { text: string; value: string }) => ({
+                      text: arr.text,
+                      callback_data: arr.value,
+                    })
+                  ),
+                ],
+              };
+            }
             if (
               previousStepObject?.validationError &&
               typeof previousStepObject?.validationError === "string"
@@ -465,9 +499,15 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 return;
               }
               ctx.state.justEntered = false;
-              await ctx.reply(previousStepObject?.validationError);
+              await ctx.reply(
+                previousStepObject?.validationError,
+                validationErrorExtra
+              );
             } else {
-              await ctx.reply("Invalid input. Please try again.");
+              await ctx.reply(
+                "Invalid input. Please try again.",
+                validationErrorExtra
+              );
             }
 
             return;
@@ -996,7 +1036,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               ctx
             );
             if (typeof title === "object") {
-              await ctx.reply(title.message, {
+              await ctx.replyWithHTML(title.message, {
                 link_preview_options: {
                   is_disabled: true,
                 },
@@ -1013,7 +1053,8 @@ const producer = (producerInitiator: BotProducerInitiator) => {
             const validBackStep =
               ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
             console.log(
-              `[Location: 1a] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`
+              `[Location: 1a] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`,
+              e
             );
             await ctx.wizard.selectStep(validBackStep);
             return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
@@ -1191,7 +1232,6 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             );
           }
 
-          console.log("OPT2", options)
           if (step.options) {
             const finalOutput = options.map(
               (o: MultiOptionObject | Array<MultiOptionObject>) => {

@@ -1657,6 +1657,19 @@ var producer2 = (producerInitiator) => {
               if ((targetStepObject == null ? void 0 : targetStepObject.validation) && !((_H = targetStepObject == null ? void 0 : targetStepObject.validation) == null ? void 0 : _H.call(targetStepObject, dataToWrite))) {
                 ((_I = ctx == null ? void 0 : ctx.message) == null ? void 0 : _I.text) ? ctx.message.text = void 0 : null;
                 ((_K = (_J = ctx == null ? void 0 : ctx.update) == null ? void 0 : _J.callback_query) == null ? void 0 : _K.data) ? ctx.update.callback_query.data = void 0 : null;
+                const validationErrorExtra = {};
+                if (targetStepObject == null ? void 0 : targetStepObject.validationErrorButtons) {
+                  validationErrorExtra.reply_markup = {
+                    inline_keyboard: [
+                      targetStepObject.validationErrorButtons.map(
+                        (arr) => ({
+                          text: arr.text,
+                          callback_data: arr.value
+                        })
+                      )
+                    ]
+                  };
+                }
                 if ((targetStepObject == null ? void 0 : targetStepObject.validationError) && typeof (targetStepObject == null ? void 0 : targetStepObject.validationError) === "string") {
                   if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(
                     ctx
@@ -1664,9 +1677,15 @@ var producer2 = (producerInitiator) => {
                     return;
                   }
                   ctx.state.justEntered = false;
-                  await ctx.reply(targetStepObject == null ? void 0 : targetStepObject.validationError);
+                  await ctx.reply(
+                    targetStepObject == null ? void 0 : targetStepObject.validationError,
+                    validationErrorExtra
+                  );
                 } else {
-                  await ctx.reply("Invalid input. Please try again.");
+                  await ctx.reply(
+                    "Invalid input. Please try again.",
+                    validationErrorExtra
+                  );
                 }
                 return;
               }
@@ -1776,7 +1795,6 @@ var producer2 = (producerInitiator) => {
           return;
         }
         if (((_pa = (_oa = ctx.update) == null ? void 0 : _oa.callback_query) == null ? void 0 : _pa.data) === universalRefresh) {
-          console.log("HERE");
           ctx.update.callback_query.data = null;
           await ctx.wizard.selectStep(ctx.wizard.cursor - 1);
           await ctx.wizard.step(ctx);
@@ -1807,6 +1825,19 @@ var producer2 = (producerInitiator) => {
           if (!(previousStepObject == null ? void 0 : previousStepObject.validation(callbackData))) {
             ((_va = ctx == null ? void 0 : ctx.message) == null ? void 0 : _va.text) ? ctx.message.text = void 0 : null;
             ((_xa = (_wa = ctx == null ? void 0 : ctx.update) == null ? void 0 : _wa.callback_query) == null ? void 0 : _xa.data) ? ctx.update.callback_query.data = void 0 : null;
+            const validationErrorExtra = {};
+            if (previousStepObject == null ? void 0 : previousStepObject.validationErrorButtons) {
+              validationErrorExtra.reply_markup = {
+                inline_keyboard: [
+                  previousStepObject.validationErrorButtons.map(
+                    (arr) => ({
+                      text: arr.text,
+                      callback_data: arr.value
+                    })
+                  )
+                ]
+              };
+            }
             if ((previousStepObject == null ? void 0 : previousStepObject.validationError) && typeof (previousStepObject == null ? void 0 : previousStepObject.validationError) === "string") {
               if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(
                 ctx
@@ -1814,9 +1845,15 @@ var producer2 = (producerInitiator) => {
                 return;
               }
               ctx.state.justEntered = false;
-              await ctx.reply(previousStepObject == null ? void 0 : previousStepObject.validationError);
+              await ctx.reply(
+                previousStepObject == null ? void 0 : previousStepObject.validationError,
+                validationErrorExtra
+              );
             } else {
-              await ctx.reply("Invalid input. Please try again.");
+              await ctx.reply(
+                "Invalid input. Please try again.",
+                validationErrorExtra
+              );
             }
             return;
           }
@@ -2191,7 +2228,7 @@ ${key}:
               ctx
             );
             if (typeof title === "object") {
-              await ctx.reply(title.message, {
+              await ctx.replyWithHTML(title.message, {
                 link_preview_options: {
                   is_disabled: true
                 }
@@ -2206,7 +2243,8 @@ ${key}:
           } catch (e) {
             const validBackStep = ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
             console.log(
-              `[Location: 1a] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`
+              `[Location: 1a] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`,
+              e
             );
             await ctx.wizard.selectStep(validBackStep);
             return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
@@ -2347,7 +2385,6 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
               ctx.scene.state.targetObject
             );
           }
-          console.log("OPT2", options);
           if (step.options) {
             const finalOutput = options.map(
               (o) => {
