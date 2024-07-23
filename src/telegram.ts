@@ -1041,11 +1041,15 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                   is_disabled: true,
                 },
               });
+
               const validBackStep =
                 ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
               console.log(
-                `[Location: 1] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`
+                `[Location: 1] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`,
+                title
               );
+              if (ctx.wizard.cursor === 0) return ctx.scene.leave();
+
               await ctx.wizard.selectStep(validBackStep);
               return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
             }
@@ -1056,6 +1060,8 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               `[Location: 1a] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`,
               e
             );
+            if (ctx.wizard.cursor === 0) return ctx.scene.leave();
+
             await ctx.wizard.selectStep(validBackStep);
             return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
           }
@@ -1131,8 +1137,11 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
                   const validBackStep =
                     ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
                   console.log(
-                    `[Location: 2] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`
+                    `[Location: 2] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`,
+                    title
                   );
+                  if (ctx.wizard.cursor === 0) return ctx.scene.leave();
+
                   await ctx.wizard.selectStep(validBackStep);
                   return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
                 }
@@ -1140,8 +1149,11 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
                 const validBackStep =
                   ctx.wizard.cursor - 2 > -1 ? ctx.wizard.cursor - 2 : 0;
                 console.log(
-                  `[Location: 2a] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`
+                  `[Location: 2a] Invalid title. Reverting to Step ${validBackStep} from current Step ${ctx.wizard.cursor}.`,
+                  e
                 );
+                if (ctx.wizard.cursor === 0) return ctx.scene.leave();
+
                 await ctx.wizard.selectStep(validBackStep);
                 return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
               }
