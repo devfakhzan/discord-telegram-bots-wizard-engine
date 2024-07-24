@@ -1532,7 +1532,10 @@ var producer2 = (producerInitiator) => {
           await ctx.deleteMessage();
         } catch (e) {
         }
-        if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx)) {
+        if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(
+          step,
+          ctx
+        )) {
           return;
         }
         ctx.state.justEntered = false;
@@ -1644,6 +1647,7 @@ var producer2 = (producerInitiator) => {
                 }
                 if ((targetStepObject == null ? void 0 : targetStepObject.validationError) && typeof (targetStepObject == null ? void 0 : targetStepObject.validationError) === "string") {
                   if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(
+                    step,
                     ctx
                   )) {
                     return;
@@ -1812,6 +1816,7 @@ var producer2 = (producerInitiator) => {
             }
             if ((previousStepObject == null ? void 0 : previousStepObject.validationError) && typeof (previousStepObject == null ? void 0 : previousStepObject.validationError) === "string") {
               if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(
+                step,
                 ctx
               )) {
                 return;

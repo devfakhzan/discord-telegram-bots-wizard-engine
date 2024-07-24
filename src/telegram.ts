@@ -81,7 +81,10 @@ const producer = (producerInitiator: BotProducerInitiator) => {
 
         if (
           !ctx.state.justEntered &&
-          (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(ctx))
+          (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(
+            step,
+            ctx
+          ))
         ) {
           return;
         }
@@ -258,6 +261,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                   if (
                     !ctx.state.justEntered &&
                     (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(
+                      step,
                       ctx
                     ))
                   ) {
@@ -493,6 +497,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
               if (
                 !ctx.state.justEntered &&
                 (await TelegramClient.exitWizardAndGoToButtonActionOrCommand(
+                  step,
                   ctx
                 ))
               ) {
