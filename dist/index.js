@@ -960,7 +960,7 @@ var getSummary = async (ctx, mainSteps, type, obj, skipping) => {
       }
       let title;
       if (typeof step.title === "string") {
-        title = step.title;
+        title = ctx.i18next.t(step.title);
       } else {
         try {
           title = await step.title(
@@ -1666,7 +1666,7 @@ var producer2 = (producerInitiator) => {
                     inline_keyboard: [
                       targetStepObject.validationErrorButtons.map(
                         (arr) => ({
-                          text: arr.text,
+                          text: ctx.i18next.t(arr.text),
                           callback_data: arr.value
                         })
                       )
@@ -1682,19 +1682,19 @@ var producer2 = (producerInitiator) => {
                   }
                   ctx.state.justEntered = false;
                   await ctx.reply(
-                    targetStepObject == null ? void 0 : targetStepObject.validationError,
+                    ctx.i18next.t(targetStepObject.validationError),
                     validationErrorExtra
                   );
                 } else {
                   await ctx.reply(
-                    "Invalid input. Please try again.",
+                    ctx.i18next.t("error.invalidInput"),
                     validationErrorExtra
                   );
                 }
                 return;
               }
               if (result === false) {
-                await ctx.reply("Invalid input. Please try again.");
+                await ctx.reply(ctx.i18next.t("error.invalidInput"));
                 return;
               }
               writeToObject(
@@ -1707,21 +1707,17 @@ var producer2 = (producerInitiator) => {
               return await ctx.wizard.steps[ctx.wizard.cursor](ctx);
             }
           }
-          await ctx.reply("Invalid input. Please try again.");
+          await ctx.reply(ctx.i18next.t("error.invalidInput"));
           return;
         }
         if (((_M = (_L = mainSteps == null ? void 0 : mainSteps[prev == null ? void 0 : prev.previousMainStep]) == null ? void 0 : _L.steps[prev == null ? void 0 : prev.previousStep]) == null ? void 0 : _M.type) === "list" && !((_O = (_N = ctx.update) == null ? void 0 : _N.callback_query) == null ? void 0 : _O.data) && ((_Q = (_P = ctx.update) == null ? void 0 : _P.callback_query) == null ? void 0 : _Q.data) !== null) {
           if (!ctx.message || !((_R = ctx.message) == null ? void 0 : _R.text)) {
-            await ctx.reply(
-              `Enter a valid comma seperated country code list (E.g.: AF, AL).`
-            );
+            await ctx.reply(ctx.i18next.t("error.invalidCountryCodeInput"));
             return;
           }
           const listEntered = listToArray(ctx.message.text);
           if (!(listEntered == null ? void 0 : listEntered.length)) {
-            await ctx.reply(
-              `Enter a valid comma seperated country code list (E.g.: AF, AL).`
-            );
+            await ctx.reply(ctx.i18next.t("error.invalidCountryCodeInput"));
             return;
           }
           for (let item of listEntered) {
@@ -1835,7 +1831,7 @@ var producer2 = (producerInitiator) => {
                 inline_keyboard: [
                   previousStepObject.validationErrorButtons.map(
                     (arr) => ({
-                      text: arr.text,
+                      text: ctx.i18next.t(arr.text),
                       callback_data: arr.value
                     })
                   )
@@ -1851,12 +1847,12 @@ var producer2 = (producerInitiator) => {
               }
               ctx.state.justEntered = false;
               await ctx.reply(
-                previousStepObject == null ? void 0 : previousStepObject.validationError,
+                ctx.i18next.t(previousStepObject.validationError),
                 validationErrorExtra
               );
             } else {
               await ctx.reply(
-                "Invalid input. Please try again.",
+                ctx.i18next.t("error.invalidInput"),
                 validationErrorExtra
               );
             }
@@ -1881,7 +1877,7 @@ var producer2 = (producerInitiator) => {
                 );
                 if (result === false) {
                   console.log("CB", callbackData);
-                  await ctx.reply("Invalid input. Please try again.");
+                  await ctx.reply(ctx.i18next.t("error.invalidInput"));
                   return;
                 }
               } else {
@@ -1901,12 +1897,16 @@ var producer2 = (producerInitiator) => {
                 const date = (0, import_dayjs3.default)(callbackData, dateTimeFormat);
                 if (!date.isValid()) {
                   return await ctx.reply(
-                    "Please enter a future date with the following format:\nDay/Month/Year Hour:Minute:Seconds\n\nFor example:\n" + (0, import_dayjs3.default)().add(1, "day").format(dateTimeFormat)
+                    ctx.i18next.t("error.invalidFutureDateFormat", {
+                      exampleDate: (0, import_dayjs3.default)().add(1, "day").format(dateTimeFormat)
+                    })
                   );
                 }
                 if (date.isBefore((0, import_dayjs3.default)())) {
                   return await ctx.reply(
-                    "Please enter a future date with the following format:\nDay/Month/Year Hour:Minute:Seconds\n\nFor example:\n" + (0, import_dayjs3.default)().add(1, "day").format(dateTimeFormat)
+                    ctx.i18next.t("error.invalidFutureDateFormat", {
+                      exampleDate: (0, import_dayjs3.default)().add(1, "day").format(dateTimeFormat)
+                    })
                   );
                 }
                 ctx.scene.state.releaseObj.date = date.toISOString();
@@ -1923,7 +1923,7 @@ var producer2 = (producerInitiator) => {
                 callbackData = callbackData == null ? void 0 : callbackData.replace(/%/g, "");
                 const input = +(callbackData == null ? void 0 : callbackData.replace(/%/g, ""));
                 if (Number.isNaN(input) || input < 0) {
-                  return await ctx.reply("Please enter a valid number");
+                  return await ctx.reply(ctx.i18next.t("error.invalidNumber"));
                 }
                 const fundraiseRelease = readObject(
                   ctx.scene.state.targetObject,
@@ -1936,7 +1936,9 @@ var producer2 = (producerInitiator) => {
                 );
                 if (totalPerccentage + input > 100) {
                   return await ctx.reply(
-                    `Invalid percentage. You can only add ${100 - totalPerccentage}% left.`
+                    ctx.i18next.t("error.invalidPercentage", {
+                      percentageRemaining: 100 - totalPerccentage
+                    })
                   );
                 }
                 ctx.scene.state.releaseObj.percentage = callbackData;
@@ -2224,7 +2226,7 @@ ${key}:
         }
         let title;
         if (typeof step.title === "string") {
-          title = step.title;
+          title = ctx.i18next.t(step.title);
         } else {
           try {
             title = await step.title(
@@ -2262,8 +2264,7 @@ ${key}:
         }
         let regular = "\n\n";
         if (!step.disableQuestionText) {
-          regular += `<u>Question</u>:
-`;
+          regular += ctx.i18next.t("forms.question");
         }
         regular += `${title}${dateRangeInfo}${multiSelectMenu}
 ${step.example ? "\n For example:\n " + step.example() + "\n" : ""}        
@@ -2271,15 +2272,18 @@ ${currentValue ? currentValueLabel : ""}
 ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         if (mainStep.mainStepDynamicTitleOverride && typeof mainStep.mainStepDynamicTitleOverride === "function") {
           mainStep.mainStep = await mainStep.mainStepDynamicTitleOverride(
-            ctx.scene.state.user
+            ctx.scene.state.user,
+            ctx
           );
         }
         let summary = regular;
-        let header = `<b>Main Step ${getEmojiNum(msi + 1)} of ${getEmojiNum(
-          mainSteps.length
-        )}: ${mainStep.mainStep}</b>`;
+        let header = ctx.i18next.t("forms.mainStepCount", {
+          currentStep: getEmojiNum(msi + 1),
+          totalSteps: getEmojiNum(mainSteps.length),
+          stepTitle: ctx.i18next.t(mainStep.mainStep)
+        });
         if (mainSteps.length === 1) {
-          header = `<b>${mainStep.mainStep}</b>`;
+          header = `<b>${ctx.i18next.t(mainStep.mainStep)}</b>`;
         }
         let progressBar = getProgressBar(mainSteps, msi + 1);
         let subProgressBar = "";
@@ -2300,7 +2304,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             summary = step.branchDoneText;
             let title2;
             if (typeof step.title === "string") {
-              title2 = step.title;
+              title2 = ctx.i18next.t(step.title);
             } else {
               try {
                 title2 = await step.title(
@@ -2511,7 +2515,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         if (step.exitSceneButton) {
           finalKeyboard.push([
             {
-              text: step.exitSceneButton.text,
+              text: ctx.i18next.t(step.exitSceneButton.text),
               callback_data: step.exitSceneButton.value
             }
           ]);

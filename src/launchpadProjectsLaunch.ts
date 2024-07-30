@@ -1119,7 +1119,7 @@ export const getSummary = async (
 
       let title;
       if (typeof step.title === "string") {
-        title = step.title;
+        title = ctx.i18next.t(step.title);
       } else {
         try {
           title = await step.title(
