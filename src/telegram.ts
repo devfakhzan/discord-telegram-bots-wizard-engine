@@ -26,45 +26,16 @@ import {
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 dayjs.extend(customParseFormat);
-const producer = (ctx: any, producerInitiator: BotProducerInitiator) => {
+const producer = (producerInitiator: BotProducerInitiator) => {
   const fns = [] as any;
   const mainSteps: any = producerInitiator.mainSteps;
   for (let [msi, mainStep] of mainSteps.entries()) {
     //@ts-ignore
 
-    if (mainStep.steps[mainStep.steps.length - 1].step === "DONESTEP") {
-      if (producerInitiator.finalConfirmationNeeded) {
-        mainStep.steps.push({
-          step: "DONESTEP_RESPONSE_CONFIRM",
-          title: ctx.i18tn.t('confirmQuestion'),
-          type: "select",
-          mapTo: "done",
-          valueType: "boolean",
-          options: [
-            {
-              text: ctx.i18tn.t('yes'),
-              value: "||onCompleteConfirm||",
-            },
-          ],
-        });
+    let addedConfirmationSteps: boolean = false;
 
-        mainStep.steps.push({
-          step: "DONESTEP_RESPONSE_CONFIRM_RESPONSE",
-          title: "DONE!",
-          type: "input",
-          mapTo: "done",
-          valueType: "boolean",
-        });
-      }
 
-      mainStep.steps.push({
-        step: "DONESTEP_RESPONSE",
-        title: "DONE!",
-        type: "input",
-        mapTo: "done",
-        valueType: "boolean",
-      });
-    }
+
     for (let [si, step] of mainStep.steps.entries() as any) {
       let fn = async (
         ctx: any,
@@ -73,6 +44,44 @@ const producer = (ctx: any, producerInitiator: BotProducerInitiator) => {
         targetObject: any,
         additionalFunctions: any
       ) => {
+
+        if (!addedConfirmationSteps) {
+          addedConfirmationSteps = true;
+          if (mainStep.steps[mainStep.steps.length - 1].step === "DONESTEP") {
+            if (producerInitiator.finalConfirmationNeeded) {
+              mainStep.steps.push({
+                step: "DONESTEP_RESPONSE_CONFIRM",
+                title: `${ctx.i18next.t('forms.generic.confirm')}?`,
+                type: "select",
+                mapTo: "done",
+                valueType: "boolean",
+                options: [
+                  {
+                    text: ctx.i18next.t('forms.generic.yes'),
+                    value: "||onCompleteConfirm||",
+                  },
+                ],
+              });
+      
+              mainStep.steps.push({
+                step: "DONESTEP_RESPONSE_CONFIRM_RESPONSE",
+                title: "DONE!",
+                type: "input",
+                mapTo: "done",
+                valueType: "boolean",
+              });
+            }
+      
+            mainStep.steps.push({
+              step: "DONESTEP_RESPONSE",
+              title: "DONE!",
+              type: "input",
+              mapTo: "done",
+              valueType: "boolean",
+            });
+          }
+        }
+
         try {
           await ctx.deleteMessage();
         } catch (e) {
@@ -927,7 +936,7 @@ const producer = (ctx: any, producerInitiator: BotProducerInitiator) => {
           if (currentValue !== true && currentValue !== false) {
             currentValue = null;
           } else {
-            currentValue = currentValue === true ? ctx.i18tn.t('yes') : ctx.i18tn.t('no');
+            currentValue = currentValue === true ? ctx.i18next.t('forms.generic.yes') : ctx.i18next.t('forms.generic.no');
           }
         }
 
@@ -1013,7 +1022,7 @@ const producer = (ctx: any, producerInitiator: BotProducerInitiator) => {
           }
         }
 
-        let currentValueLabel =  `${ctx.i18tn.t('enteredValue')}:`;
+        let currentValueLabel =  `${ctx.i18next.t('forms.generic.enteredValue')}:`;
 
         switch (step.type) {
           case "select":
@@ -1021,10 +1030,10 @@ const producer = (ctx: any, producerInitiator: BotProducerInitiator) => {
           case "multiSelect":
           case "check":
           case "eitherTrue":
-            currentValueLabel = `${ctx.i18tn.t('selectedValue')}:`;
+            currentValueLabel = `${ctx.i18next.t('forms.generic.selectedValue')}:`;
             break;
           case "input":
-            currentValueLabel = `${ctx.i18tn.t('enteredValue')}:`;
+            currentValueLabel = `${ctx.i18next.t('forms.generic.enteredValue')}:`;
             break;
         }
 
@@ -1116,7 +1125,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             ctx.scene.state.skipping
           )) as string;
 
-          header = `<b>${ctx.i18tn.t('summary')}</b>`;
+          header = `<b>${ctx.i18next.t('forms.generic.summary')}</b>`;
           progressBar = "";
 
           if (step.branchDone) {
@@ -1201,28 +1210,28 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
 
         if (((msi === 0 && si > 0) || msi > 0) && !step.branchDone) {
           baseKeyboard.push({
-            text: ctx.i18tn.t('back'),
+            text: ctx.i18next.t('forms.generic.back'),
             callback_data: universalBack,
           });
         }
 
         if (step.showRefreshStepButton) {
           baseKeyboard.push({
-            text: ctx.i18tn.t('refresh'),
+            text: ctx.i18next.t('forms.generic.refresh'),
             callback_data: universalRefresh,
           });
         }
 
         if (step.step === "DONESTEP" && step.branchDone) {
           baseKeyboard.push({
-            text: ctx.i18tn.t('continue'),
+            text: ctx.i18next.t('forms.generic.continue'),
             callback_data: backToMainBranch,
           });
         }
 
         if (step.type === "photo") {
           baseKeyboard.push({
-            text: ctx.i18tn.t('skip'),
+            text: ctx.i18next.t('forms.generic.skip'),
             callback_data: "||SKIP||",
           });
         }
@@ -1296,7 +1305,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             ),
             [
               {
-                text: ctx.i18tn.t('continue'),
+                text: ctx.i18next.t('forms.generic.continue'),
                 callback_data: universalContinue,
               },
             ]
@@ -1320,7 +1329,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         ) {
           finalKeyboard.push([
             {
-              text: "Continue with current value",
+              text: ctx.i18next.t('forms.generic.continueWithCurrentValue'),
               callback_data:
                 readObject(
                   ctx.scene.state.targetObject,
@@ -1366,7 +1375,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
               e,
             });
           }
-          const backButton = baseKeyboard.find((b: any) => b.text === ctx.i18tn.t('back'));
+          const backButton = baseKeyboard.find((b: any) => b.text === ctx.i18next.t('forms.generic.back'));
           if (backButton) {
             // Removes back button since user has completed the form
             baseKeyboard.splice(baseKeyboard.indexOf(backButton), 1);
@@ -1380,7 +1389,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           ) {
             finalKeyboard.push([
               {
-                text: ctx.i18tn.t('confirm'),
+                text: ctx.i18next.t('forms.generic.confirm'),
                 callback_data: producerInitiator.finalConfirmationNeeded
                   ? universalOnCompleteConfirmation
                   : universalOnComplete,

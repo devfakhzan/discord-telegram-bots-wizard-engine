@@ -1494,40 +1494,44 @@ var producer2 = (producerInitiator) => {
   const fns = [];
   const mainSteps = producerInitiator.mainSteps;
   for (let [msi, mainStep] of mainSteps.entries()) {
-    if (mainStep.steps[mainStep.steps.length - 1].step === "DONESTEP") {
-      if (producerInitiator.finalConfirmationNeeded) {
-        mainStep.steps.push({
-          step: "DONESTEP_RESPONSE_CONFIRM",
-          title: "Confirm?",
-          type: "select",
-          mapTo: "done",
-          valueType: "boolean",
-          options: [
-            {
-              text: "Yes",
-              value: "||onCompleteConfirm||"
-            }
-          ]
-        });
-        mainStep.steps.push({
-          step: "DONESTEP_RESPONSE_CONFIRM_RESPONSE",
-          title: "DONE!",
-          type: "input",
-          mapTo: "done",
-          valueType: "boolean"
-        });
-      }
-      mainStep.steps.push({
-        step: "DONESTEP_RESPONSE",
-        title: "DONE!",
-        type: "input",
-        mapTo: "done",
-        valueType: "boolean"
-      });
-    }
+    let addedConfirmationSteps = false;
     for (let [si, step] of mainStep.steps.entries()) {
       let fn = async (ctx, TelegramClient, UserDb, targetObject, additionalFunctions) => {
         var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia, _Ja, _Ka, _La, _Ma, _Na, _Oa, _Pa, _Qa, _Ra, _Sa, _Ta, _Ua, _Va, _Wa, _Xa, _Ya, _Za, __a;
+        if (!addedConfirmationSteps) {
+          addedConfirmationSteps = true;
+          if (mainStep.steps[mainStep.steps.length - 1].step === "DONESTEP") {
+            if (producerInitiator.finalConfirmationNeeded) {
+              mainStep.steps.push({
+                step: "DONESTEP_RESPONSE_CONFIRM",
+                title: `${ctx.i18next.t("forms.generic.confirm")}?`,
+                type: "select",
+                mapTo: "done",
+                valueType: "boolean",
+                options: [
+                  {
+                    text: ctx.i18next.t("forms.generic.yes"),
+                    value: "||onCompleteConfirm||"
+                  }
+                ]
+              });
+              mainStep.steps.push({
+                step: "DONESTEP_RESPONSE_CONFIRM_RESPONSE",
+                title: "DONE!",
+                type: "input",
+                mapTo: "done",
+                valueType: "boolean"
+              });
+            }
+            mainStep.steps.push({
+              step: "DONESTEP_RESPONSE",
+              title: "DONE!",
+              type: "input",
+              mapTo: "done",
+              valueType: "boolean"
+            });
+          }
+        }
         try {
           await ctx.deleteMessage();
         } catch (e) {
@@ -2121,7 +2125,7 @@ var producer2 = (producerInitiator) => {
           if (currentValue !== true && currentValue !== false) {
             currentValue = null;
           } else {
-            currentValue = currentValue === true ? "Yes" : "No";
+            currentValue = currentValue === true ? ctx.i18next.t("forms.generic.yes") : ctx.i18next.t("forms.generic.no");
           }
         }
         if (currentValue !== null && typeof currentValue === "object") {
@@ -2183,17 +2187,17 @@ ${key}:
 ` + result.trim() + "\n\n<i>Enter a comma seperated number(s) for the blockchain(s) you want to use. For example:\n1,3,5</i>";
           }
         }
-        let currentValueLabel = "Entered value:";
+        let currentValueLabel = `${ctx.i18next.t("forms.generic.enteredValue")}:`;
         switch (step.type) {
           case "select":
           case "selectTwo":
           case "multiSelect":
           case "check":
           case "eitherTrue":
-            currentValueLabel = "Selected value:";
+            currentValueLabel = `${ctx.i18next.t("forms.generic.selectedValue")}:`;
             break;
           case "input":
-            currentValueLabel = "Entered value:";
+            currentValueLabel = `${ctx.i18next.t("forms.generic.enteredValue")}:`;
             break;
         }
         let title;
@@ -2270,7 +2274,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             ctx.scene.state.targetObject,
             ctx.scene.state.skipping
           );
-          header = "<b>Summary</b>";
+          header = `<b>${ctx.i18next.t("forms.generic.summary")}</b>`;
           progressBar = "";
           if (step.branchDone) {
             summary = step.branchDoneText;
@@ -2339,25 +2343,25 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         const baseKeyboard = [];
         if ((msi === 0 && si > 0 || msi > 0) && !step.branchDone) {
           baseKeyboard.push({
-            text: "Back",
+            text: ctx.i18next.t("forms.generic.back"),
             callback_data: universalBack
           });
         }
         if (step.showRefreshStepButton) {
           baseKeyboard.push({
-            text: "\u{1F504} Refresh",
+            text: ctx.i18next.t("forms.generic.refresh"),
             callback_data: universalRefresh
           });
         }
         if (step.step === "DONESTEP" && step.branchDone) {
           baseKeyboard.push({
-            text: "Continue",
+            text: ctx.i18next.t("forms.generic.continue"),
             callback_data: backToMainBranch
           });
         }
         if (step.type === "photo") {
           baseKeyboard.push({
-            text: "Skip",
+            text: ctx.i18next.t("forms.generic.skip"),
             callback_data: "||SKIP||"
           });
         }
@@ -2420,7 +2424,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             ),
             [
               {
-                text: `Continue`,
+                text: ctx.i18next.t("forms.generic.continue"),
                 callback_data: universalContinue
               }
             ]
@@ -2437,7 +2441,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         if (cv !== null && (typeof cv === "string" && cv || typeof cv === "number" || typeof cv === "boolean") && cv) {
           finalKeyboard.push([
             {
-              text: "Continue with current value",
+              text: ctx.i18next.t("forms.generic.continueWithCurrentValue"),
               callback_data: readObject(
                 ctx.scene.state.targetObject,
                 step.mapTo,
@@ -2465,7 +2469,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
               e
             });
           }
-          const backButton = baseKeyboard.find((b) => b.text === "Back");
+          const backButton = baseKeyboard.find((b) => b.text === ctx.i18next.t("forms.generic.back"));
           if (backButton) {
             baseKeyboard.splice(baseKeyboard.indexOf(backButton), 1);
           }
@@ -2474,7 +2478,7 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
           if ((producerInitiator == null ? void 0 : producerInitiator.onComplete) && typeof (producerInitiator == null ? void 0 : producerInitiator.onComplete) === "function") {
             finalKeyboard.push([
               {
-                text: "Confirm",
+                text: ctx.i18next.t("forms.generic.confirm"),
                 callback_data: producerInitiator.finalConfirmationNeeded ? universalOnCompleteConfirmation : universalOnComplete
               }
             ]);
