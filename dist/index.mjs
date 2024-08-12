@@ -883,7 +883,7 @@ var getSummary = async (ctx, mainSteps, type, obj, skipping) => {
     if (usedMainSteps.length === 1) {
       summaryText += `
 
-<u>${mainStep.mainStep}</u>
+<u>${ctx.i18next.t(mainStep.mainStep)}</u>
 
 `;
     } else {
