@@ -1497,7 +1497,7 @@ var producer2 = (producerInitiator) => {
     let addedConfirmationSteps = false;
     for (let [si, step] of mainStep.steps.entries()) {
       let fn = async (ctx, TelegramClient, UserDb, targetObject, additionalFunctions) => {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia, _Ja, _Ka, _La, _Ma, _Na, _Oa, _Pa, _Qa, _Ra, _Sa, _Ta, _Ua, _Va, _Wa, _Xa, _Ya, _Za, __a;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m, _n, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _A, _B, _C, _D, _E, _F, _G, _H, _I, _J, _K, _L, _M, _N, _O, _P, _Q, _R, _S, _T, _U, _V, _W, _X, _Y, _Z, __, _$, _aa, _ba, _ca, _da, _ea, _fa, _ga, _ha, _ia, _ja, _ka, _la, _ma, _na, _oa, _pa, _qa, _ra, _sa, _ta, _ua, _va, _wa, _xa, _ya, _za, _Aa, _Ba, _Ca, _Da, _Ea, _Fa, _Ga, _Ha, _Ia, _Ja, _Ka, _La, _Ma, _Na, _Oa, _Pa, _Qa, _Ra, _Sa, _Ta, _Ua, _Va, _Wa, _Xa, _Ya;
         if (!addedConfirmationSteps) {
           addedConfirmationSteps = true;
           if (mainStep.steps[mainStep.steps.length - 1].step === "DONESTEP") {
@@ -1934,12 +1934,7 @@ var producer2 = (producerInitiator) => {
                 );
               }
               if (previousStepObject == null ? void 0 : previousStepObject.action) {
-                console.log(
-                  "ACTION HERE",
-                  prevObj == null ? void 0 : prevObj.action,
-                  (_Aa = (_za = ctx.update) == null ? void 0 : _za.callback_query) == null ? void 0 : _Aa.data
-                );
-                if (((_Ca = (_Ba = ctx.update) == null ? void 0 : _Ba.callback_query) == null ? void 0 : _Ca.data) === "false" && prevObj.actionNoBackTomainBranch) {
+                if (((_Aa = (_za = ctx.update) == null ? void 0 : _za.callback_query) == null ? void 0 : _Aa.data) === "false" && prevObj.actionNoBackTomainBranch) {
                   ctx.update.callback_query.data = void 0;
                   ctx.scene.state.in_branch = false;
                   await ctx.scene.enter(
@@ -1960,15 +1955,16 @@ var producer2 = (producerInitiator) => {
         if (step.step === "DONESTEP" && !producerInitiator.finalConfirmationNeeded) {
           ctx.scene.leave();
           try {
+            console.log("calling onComplete 3");
             await producerInitiator.onComplete(
               ctx,
               ctx.scene.state.targetObject
             );
           } catch (e) {
             console.error("Error in onComplete 3", {
-              targetObject: (_Ea = (_Da = ctx.scene) == null ? void 0 : _Da.state) == null ? void 0 : _Ea.targetObject,
-              userId: (_Ga = (_Fa = ctx.scene) == null ? void 0 : _Fa.state) == null ? void 0 : _Ga.userId,
-              user: (_Ia = (_Ha = ctx.scene) == null ? void 0 : _Ha.state) == null ? void 0 : _Ia.user,
+              targetObject: (_Ca = (_Ba = ctx.scene) == null ? void 0 : _Ba.state) == null ? void 0 : _Ca.targetObject,
+              userId: (_Ea = (_Da = ctx.scene) == null ? void 0 : _Da.state) == null ? void 0 : _Ea.userId,
+              user: (_Ga = (_Fa = ctx.scene) == null ? void 0 : _Fa.state) == null ? void 0 : _Ga.user,
               e
             });
           }
@@ -1995,7 +1991,7 @@ var producer2 = (producerInitiator) => {
               )) {
                 ctx.scene.state.skipping.push(currentPosition);
               }
-              switch ((_Ka = (_Ja = ctx.update) == null ? void 0 : _Ja.callback_query) == null ? void 0 : _Ka.data) {
+              switch ((_Ia = (_Ha = ctx.update) == null ? void 0 : _Ha.callback_query) == null ? void 0 : _Ia.data) {
                 case universalBack: {
                   ctx.wizard.cursor--;
                   await ctx.wizard.steps[ctx.wizard.cursor](ctx);
@@ -2043,7 +2039,7 @@ var producer2 = (producerInitiator) => {
               )) {
                 ctx.scene.state.skipping.push(currentPosition);
               }
-              switch ((_Ma = (_La = ctx.update) == null ? void 0 : _La.callback_query) == null ? void 0 : _Ma.data) {
+              switch ((_Ka = (_Ja = ctx.update) == null ? void 0 : _Ja.callback_query) == null ? void 0 : _Ka.data) {
                 case universalBack: {
                   ctx.wizard.cursor--;
                   await ctx.wizard.steps[ctx.wizard.cursor](ctx);
@@ -2080,7 +2076,7 @@ var producer2 = (producerInitiator) => {
               )) {
                 ctx.scene.state.skipping.push(currentPosition);
               }
-              switch ((_Oa = (_Na = ctx.update) == null ? void 0 : _Na.callback_query) == null ? void 0 : _Oa.data) {
+              switch ((_Ma = (_La = ctx.update) == null ? void 0 : _La.callback_query) == null ? void 0 : _Ma.data) {
                 case universalBack: {
                   ctx.wizard.cursor--;
                   await ctx.wizard.steps[ctx.wizard.cursor](ctx);
@@ -2187,17 +2183,23 @@ ${key}:
 ` + result.trim() + "\n\n<i>Enter a comma seperated number(s) for the blockchain(s) you want to use. For example:\n1,3,5</i>";
           }
         }
-        let currentValueLabel = `${ctx.i18next.t("forms.generic.enteredValue")}:`;
+        let currentValueLabel = `${ctx.i18next.t(
+          "forms.generic.enteredValue"
+        )}:`;
         switch (step.type) {
           case "select":
           case "selectTwo":
           case "multiSelect":
           case "check":
           case "eitherTrue":
-            currentValueLabel = `${ctx.i18next.t("forms.generic.selectedValue")}:`;
+            currentValueLabel = `${ctx.i18next.t(
+              "forms.generic.selectedValue"
+            )}:`;
             break;
           case "input":
-            currentValueLabel = `${ctx.i18next.t("forms.generic.enteredValue")}:`;
+            currentValueLabel = `${ctx.i18next.t(
+              "forms.generic.enteredValue"
+            )}:`;
             break;
         }
         let title;
@@ -2331,9 +2333,9 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             );
           } catch (e) {
             console.error("Error in onComplete 4", {
-              targetObject: (_Qa = (_Pa = ctx.scene) == null ? void 0 : _Pa.state) == null ? void 0 : _Qa.targetObject,
-              userId: (_Sa = (_Ra = ctx.scene) == null ? void 0 : _Ra.state) == null ? void 0 : _Sa.userId,
-              user: (_Ua = (_Ta = ctx.scene) == null ? void 0 : _Ta.state) == null ? void 0 : _Ua.user,
+              targetObject: (_Oa = (_Na = ctx.scene) == null ? void 0 : _Na.state) == null ? void 0 : _Oa.targetObject,
+              userId: (_Qa = (_Pa = ctx.scene) == null ? void 0 : _Pa.state) == null ? void 0 : _Qa.userId,
+              user: (_Sa = (_Ra = ctx.scene) == null ? void 0 : _Ra.state) == null ? void 0 : _Sa.user,
               e
             });
           }
@@ -2457,19 +2459,22 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
         if (producerInitiator.onComplete && msi === mainSteps.length - 1 && si === mainSteps[msi].steps.length - 1) {
           await ctx.scene.leave();
           try {
+            console.log("calling onComplete 5");
             await producerInitiator.onComplete(
               ctx,
               ctx.scene.state.targetObject
             );
           } catch (e) {
             console.error("Error in onComplete 5", {
-              targetObject: (_Wa = (_Va = ctx.scene) == null ? void 0 : _Va.state) == null ? void 0 : _Wa.targetObject,
-              userId: (_Ya = (_Xa = ctx.scene) == null ? void 0 : _Xa.state) == null ? void 0 : _Ya.userId,
-              user: (__a = (_Za = ctx.scene) == null ? void 0 : _Za.state) == null ? void 0 : __a.user,
+              targetObject: (_Ua = (_Ta = ctx.scene) == null ? void 0 : _Ta.state) == null ? void 0 : _Ua.targetObject,
+              userId: (_Wa = (_Va = ctx.scene) == null ? void 0 : _Va.state) == null ? void 0 : _Wa.userId,
+              user: (_Ya = (_Xa = ctx.scene) == null ? void 0 : _Xa.state) == null ? void 0 : _Ya.user,
               e
             });
           }
-          const backButton = baseKeyboard.find((b) => b.text === ctx.i18next.t("forms.generic.back"));
+          const backButton = baseKeyboard.find(
+            (b) => b.text === ctx.i18next.t("forms.generic.back")
+          );
           if (backButton) {
             baseKeyboard.splice(baseKeyboard.indexOf(backButton), 1);
           }
