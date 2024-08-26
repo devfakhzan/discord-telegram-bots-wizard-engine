@@ -1074,7 +1074,7 @@ export const getSummary = async (
   for (let mainStep of usedMainSteps) {
     i++;
     if (usedMainSteps.length === 1) {
-      summaryText += `\n\n<u>${mainStep.mainStep}</u>\n\n`;
+      summaryText += `\n\n<u>${ctx.i18next.t(mainStep.mainStep)}</u>\n\n`;
     } else {
       summaryText += `\n\n<u>Main Step ${getEmojiNum(i)}: ${
         mainStep.mainStep
