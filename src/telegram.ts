@@ -79,11 +79,11 @@ const producer = (producerInitiator: BotProducerInitiator) => {
           }
         }
 
-        try {
-          await ctx.deleteMessage();
-        } catch (e) {
-          // console.log("Error deleting message", e);
-        }
+        // try {
+        //   await ctx.deleteMessage();
+        // } catch (e) {
+        //   // console.log("Error deleting message", e);
+        // }
 
         if (
           !ctx.state.justEntered &&
@@ -1403,9 +1403,9 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
             ]);
           }
         }
-        try {
-          await ctx.deleteMessage();
-        } catch (e) {}
+        // try {
+        //   await ctx.deleteMessage();
+        // } catch (e) {}
 
         if (step.exitSceneButton) {
           finalKeyboard.push([

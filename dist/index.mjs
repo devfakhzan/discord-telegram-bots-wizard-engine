@@ -1532,10 +1532,6 @@ var producer2 = (producerInitiator) => {
             });
           }
         }
-        try {
-          await ctx.deleteMessage();
-        } catch (e) {
-        }
         if (!ctx.state.justEntered && await TelegramClient.exitWizardAndGoToButtonActionOrCommand(
           step,
           ctx
@@ -2488,10 +2484,6 @@ ${currentValue ? "<b>" + currentValue + "</b>" : ""}`;
               }
             ]);
           }
-        }
-        try {
-          await ctx.deleteMessage();
-        } catch (e) {
         }
         if (step.exitSceneButton) {
           finalKeyboard.push([
