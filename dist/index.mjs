@@ -861,6 +861,10 @@ var getCurrentValue = async (ctx, step, value, targetObject, mainSteps) => {
   }
 };
 var getSummary = async (ctx, mainSteps, type, obj, skipping) => {
+  console.log(
+    "SKIPPINGS",
+    JSON.stringify(skipping, null, 3)
+  );
   let summaryText = "";
   let usedMainSteps = [];
   for (let mainStep of mainSteps) {
@@ -908,17 +912,17 @@ var getSummary = async (ctx, mainSteps, type, obj, skipping) => {
       if (step.valueType === "boolean" && currentValue !== null) {
         currentValue = currentValue === true ? "Yes" : "No";
       }
-      let currentValueLabel = "Entered value:";
+      let currentValueLabel = `${ctx.i18next.t("forms.generic.enteredValue")}:`;
       switch (step.type) {
         case "select":
         case "selectTwo":
         case "multiSelect":
         case "check":
         case "eitherTrue":
-          currentValueLabel = "Selected value:";
+          currentValueLabel = `${ctx.i18next.t("forms.generic.selectedValue")}:`;
           break;
         case "input":
-          currentValueLabel = "Entered value:";
+          currentValueLabel = `${ctx.i18next.t("forms.generic.enteredValue")}:`;
           break;
       }
       let title;
@@ -1791,7 +1795,7 @@ var producer2 = (producerInitiator) => {
         );
         if (prev && //@ts-ignore
         !((_ua = ctx.scene.state.skipping) == null ? void 0 : _ua.find(
-          (s) => s.mainStep === (prev == null ? void 0 : prev.previousMainStep) && s.step === (prev == null ? void 0 : prev.previousStep) && s.branch === mainSteps
+          (s) => s.mainStep === (prev == null ? void 0 : prev.previousMainStep) && s.step === (prev == null ? void 0 : prev.previousStep)
         )) && //@ts-ignore
         (previousStepObject == null ? void 0 : previousStepObject.validation) && callbackData !== void 0 && previousStepObject.type !== "branch") {
           if (!(previousStepObject == null ? void 0 : previousStepObject.validation(callbackData))) {
@@ -1837,7 +1841,7 @@ var producer2 = (producerInitiator) => {
         }
         if (callbackData !== universalBack && callbackData !== null && callbackData !== void 0) {
           if (previousStepObject && !((_ya = ctx.scene.state.skipping) == null ? void 0 : _ya.find(
-            (s) => s.mainStep === (prev == null ? void 0 : prev.previousMainStep) && s.step === (prev == null ? void 0 : prev.previousStep) && s.branch === mainSteps
+            (s) => s.mainStep === (prev == null ? void 0 : prev.previousMainStep) && s.step === (prev == null ? void 0 : prev.previousStep)
           )) && mapTos) {
             if (!previousStepObject.inBranch) {
               if (callbackData !== universalContinue && callbackData !== universalSkip) {
@@ -1983,7 +1987,7 @@ var producer2 = (producerInitiator) => {
               )
             )) {
               if (!ctx.scene.state.skipping.find(
-                (s) => s.mainStep === msi && s.step === si && s.branch === mainSteps
+                (s) => s.mainStep === msi && s.step === si
               )) {
                 ctx.scene.state.skipping.push(currentPosition);
               }
@@ -2004,7 +2008,7 @@ var producer2 = (producerInitiator) => {
               return;
             } else {
               ctx.scene.state.skipping = ctx.scene.state.skipping.filter(
-                (s) => !(s.mainStep === msi && s.step === si && s.branch === mainSteps)
+                (s) => !(s.mainStep === msi && s.step === si)
               );
             }
           } else if (dependsOn.condition === "equals") {
@@ -2031,7 +2035,7 @@ var producer2 = (producerInitiator) => {
             }
             if (dependsOn.value !== dependsOnValue) {
               if (!ctx.scene.state.skipping.find(
-                (s) => s.mainStep === msi && s.step === si && s.branch === mainSteps
+                (s) => s.mainStep === msi && s.step === si
               )) {
                 ctx.scene.state.skipping.push(currentPosition);
               }
@@ -2052,7 +2056,7 @@ var producer2 = (producerInitiator) => {
               return;
             } else {
               ctx.scene.state.skipping = ctx.scene.state.skipping.filter(
-                (s) => !(s.mainStep === msi && s.step === si && s.branch === mainSteps)
+                (s) => !(s.mainStep === msi && s.step === si)
               );
             }
           } else if (dependsOn.condition === "eitherTrue") {
@@ -2068,7 +2072,7 @@ var producer2 = (producerInitiator) => {
             );
             if (!(dependsOnValue1 === dependsOn.value || dependsOnValue2 === dependsOn.value)) {
               if (!ctx.scene.state.skipping.find(
-                (s) => s.mainStep === msi && s.step === si && s.branch === mainSteps
+                (s) => s.mainStep === msi && s.step === si
               )) {
                 ctx.scene.state.skipping.push(currentPosition);
               }
@@ -2089,7 +2093,7 @@ var producer2 = (producerInitiator) => {
               return;
             } else {
               ctx.scene.state.skipping = ctx.scene.state.skipping.filter(
-                (s) => !(s.mainStep === msi && s.step === si && s.branch === mainSteps)
+                (s) => !(s.mainStep === msi && s.step === si)
               );
             }
           } else if (dependsOn.condition === "not") {

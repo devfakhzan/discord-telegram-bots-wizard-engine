@@ -1044,6 +1044,9 @@ export const getSummary = async (
   obj: any,
   skipping: any
 ) => {
+  console.log(
+    "SKIPPINGS", JSON.stringify(skipping, null, 3)
+  )
   let summaryText = "";
   // let originalMainSteps = JSON.parse(JSON.stringify(mainSteps));
   let usedMainSteps: any = [];
@@ -1102,7 +1105,7 @@ export const getSummary = async (
         currentValue = currentValue === true ? "Yes" : "No";
       }
 
-      let currentValueLabel = "Entered value:";
+      let currentValueLabel = `${ctx.i18next.t('forms.generic.enteredValue')}:`;
 
       switch (step.type) {
         case "select":
@@ -1110,10 +1113,10 @@ export const getSummary = async (
         case "multiSelect":
         case "check":
         case "eitherTrue":
-          currentValueLabel = "Selected value:";
+          currentValueLabel = `${ctx.i18next.t('forms.generic.selectedValue')}:`;
           break;
         case "input":
-          currentValueLabel = "Entered value:";
+          currentValueLabel = `${ctx.i18next.t('forms.generic.enteredValue')}:`;
           break;
       }
 

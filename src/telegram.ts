@@ -463,8 +463,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
           !ctx.scene.state.skipping?.find(
             (s: { branch: any; mainStep: any; step: any }) =>
               s.mainStep === prev?.previousMainStep &&
-              s.step === prev?.previousStep &&
-              s.branch === mainSteps
+              s.step === prev?.previousStep
           ) &&
           //@ts-ignore
           previousStepObject?.validation &&
@@ -541,8 +540,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
             !ctx.scene.state.skipping?.find(
               (s: { branch: any; mainStep: any; step: any }) =>
                 s.mainStep === prev?.previousMainStep &&
-                s.step === prev?.previousStep &&
-                s.branch === mainSteps
+                s.step === prev?.previousStep
             ) &&
             mapTos
           ) {
@@ -739,8 +737,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 !ctx.scene.state.skipping.find(
                   (s: { branch: any; mainStep: number; step: any }) =>
                     s.mainStep === msi &&
-                    s.step === si &&
-                    s.branch === mainSteps
+                    s.step === si
                 )
               ) {
                 ctx.scene.state.skipping.push(currentPosition);
@@ -770,8 +767,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 (s: { mainStep: number; step: any; branch: any }) =>
                   !(
                     s.mainStep === msi &&
-                    s.step === si &&
-                    s.branch === mainSteps
+                    s.step === si
                   )
               );
             }
@@ -806,8 +802,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 !ctx.scene.state.skipping.find(
                   (s: { branch: any; mainStep: number; step: any }) =>
                     s.mainStep === msi &&
-                    s.step === si &&
-                    s.branch === mainSteps
+                    s.step === si
                 )
               ) {
                 ctx.scene.state.skipping.push(currentPosition);
@@ -837,8 +832,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 (s: { mainStep: number; step: any; branch: any }) =>
                   !(
                     s.mainStep === msi &&
-                    s.step === si &&
-                    s.branch === mainSteps
+                    s.step === si
                   )
               );
             }
@@ -864,8 +858,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 !ctx.scene.state.skipping.find(
                   (s: { branch: any; mainStep: number; step: any }) =>
                     s.mainStep === msi &&
-                    s.step === si &&
-                    s.branch === mainSteps
+                    s.step === si
                 )
               ) {
                 ctx.scene.state.skipping.push(currentPosition);
@@ -895,8 +888,7 @@ const producer = (producerInitiator: BotProducerInitiator) => {
                 (s: { branch: any; mainStep: number; step: any }) =>
                   !(
                     s.mainStep === msi &&
-                    s.step === si &&
-                    s.branch === mainSteps
+                    s.step === si
                   )
               );
             }
