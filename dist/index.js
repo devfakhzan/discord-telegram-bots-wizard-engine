@@ -898,10 +898,6 @@ var getCurrentValue = async (ctx, step, value, targetObject, mainSteps) => {
   }
 };
 var getSummary = async (ctx, mainSteps, type, obj, skipping) => {
-  console.log(
-    "SKIPPINGS",
-    JSON.stringify(skipping, null, 3)
-  );
   let summaryText = "";
   let usedMainSteps = [];
   for (let mainStep of mainSteps) {

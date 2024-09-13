@@ -1,6 +1,6 @@
 {
   "name": "discord-telegram-bots-wizard-engine",
-  "version": "1.0.58",
+  "version": "1.0.59",
   "description": "",
   "main": "dist/index",
   "types": "src/index.d.ts",

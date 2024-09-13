@@ -1044,9 +1044,6 @@ export const getSummary = async (
   obj: any,
   skipping: any
 ) => {
-  console.log(
-    "SKIPPINGS", JSON.stringify(skipping, null, 3)
-  )
   let summaryText = "";
   // let originalMainSteps = JSON.parse(JSON.stringify(mainSteps));
   let usedMainSteps: any = [];
